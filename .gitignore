@@ -2,13 +2,17 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
+#Isaac
+*.DS_Store
+
+
+/LDJam-54-Unity-Project/[Ll]ibrary/
+/LDJam-54-Unity-Project/[Tt]emp/
+/LDJam-54-Unity-Project/[Oo]bj/
+/LDJam-54-Unity-Project/[Bb]uild/
+/LDJam-54-Unity-Project/[Bb]uilds/
+/LDJam-54-Unity-Project/[Ll]ogs/
+/LDJam-54-Unity-Project/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -65,8 +69,8 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Packed Addressables
-/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/LDJam-54-Unity-Project/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 
 # Temporary auto-generated Android Assets
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
+/LDJam-54-Unity-Project/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/LDJam-54-Unity-Project/[Aa]ssets/[Ss]treamingAssets/aa/*
