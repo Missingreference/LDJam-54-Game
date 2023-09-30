@@ -11,8 +11,8 @@ public class Slime : Enemy
 
     public float moveWaitTime { get; private set; } = 1.0f;
 
-    public CircleCollider2D movementCollider;
-    public CircleCollider2D bodyCollider;
+    public CircleCollider2D movementCollider { get; private set; }
+    public CircleCollider2D bodyCollider { get; private set; }
 
     private float m_DamageFlashTimer = 0.0f;
     private float m_DamageFlashCount = 0;
