@@ -33,7 +33,7 @@ public class GameDirector
         {
             GameObject newEnemy = new GameObject("Enemy");
             newEnemy.transform.position = pos;
-            newEnemy.AddComponent<Enemy>();
+            //newEnemy.AddComponent<Enemy>();
         }
     }
 

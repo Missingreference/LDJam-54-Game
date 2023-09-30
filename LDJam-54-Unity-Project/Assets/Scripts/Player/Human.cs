@@ -8,6 +8,8 @@ using Elanetic.Tools;
 
 public class Human : Actor
 {
+    public FacingDirection facingDirection = FacingDirection.Right;
+
     //Hover
     public float spriteHoverSpeed = 0.25f;
     public float spriteHoverDistance = 0.05f;
@@ -27,13 +29,21 @@ public class Human : Actor
     public BoxCollider2D movementCollider { get; private set; }
 
 
+    //Weapon
+    public HumanWeapon weapon { get; private set; }
+
+    //Events
+    public Action onAttack;
+    public Action onFacingDirectionChanged;
+
+
     private Sprite m_MainSprite;
 
     private float m_HoverTimer = 0.0f;
     private float m_DamageFlashTimer = 0.0f;
     private float m_DamageFlashCount = 0;
 
-    private List<DamageTrigger> m_AttackTriggers = new List<DamageTrigger>();
+    public List<DamageTrigger> attackTriggers = new List<DamageTrigger>();
     private List<DamageTrigger> m_PooledAttackTriggers = new List<DamageTrigger>();
     private List<float> m_AttackSwipeTimers = new List<float>();
     private List<float> m_AttackDirections = new List<float>();
@@ -55,6 +65,11 @@ public class Human : Actor
         movementCollider = gameObject.AddComponent<BoxCollider2D>();
         movementCollider.isTrigger = false;
         movementCollider.size = (spriteRenderer.bounds.extents * 2.0f) * 0.9f;
+
+        GameObject weaponObject = new GameObject("Weapon");
+        weaponObject.transform.parent = transform;
+        weapon = weaponObject.AddComponent<HumanWeapon>();
+        
     }
 
 
@@ -62,7 +77,7 @@ public class Human : Actor
     {
         AnimateHover();
 
-        if(m_AttackTriggers.Count > 0)
+        if(attackTriggers.Count > 0)
         {
             AnimateAttack();
         }
@@ -137,9 +152,9 @@ public class Human : Actor
             if(m_AttackSwipeTimers[i] >= 1.0f)
             {
                 m_AttackSwipeTimers.RemoveAt(i);
-                DamageTrigger trigger = m_AttackTriggers[i];
+                DamageTrigger trigger = attackTriggers[i];
                 trigger.gameObject.SetActive(false);
-                m_AttackTriggers.RemoveAt(i);
+                attackTriggers.RemoveAt(i);
                 m_AttackDirections.RemoveAt(i);
                 m_PooledAttackTriggers.Add(trigger);
                 trigger.onDealDamage -= DealDamage;
@@ -154,7 +169,7 @@ public class Human : Actor
                 time = 1.0f;
             }
             m_AttackSwipeTimers[i] = time;
-            DamageTrigger damageTrigger = m_AttackTriggers[i];
+            DamageTrigger damageTrigger = attackTriggers[i];
 
             float direction = m_AttackDirections[i];
 
@@ -208,9 +223,9 @@ public class Human : Actor
             damageTrigger.trigger.callbackLayers = 1 << 8;
         }
 
-        m_AttackTriggers.Add(damageTrigger);
+        attackTriggers.Add(damageTrigger);
         m_AttackSwipeTimers.Add(0.0f);
-        if(spriteRenderer.flipX)
+        if(facingDirection == FacingDirection.Left)
         {
             m_AttackDirections.Add(90.0f);
         }
@@ -223,7 +238,7 @@ public class Human : Actor
 
         damageTrigger.onDealDamage += DealDamage;
 
-
+        onAttack?.Invoke();
     }
 
     protected override void OnMove()
@@ -232,11 +247,29 @@ public class Human : Actor
 
         if(moveDirection.x < 0)
         {
-            spriteRenderer.flipX = true;
+            SetFacingDirection(FacingDirection.Left);
         }
         else if(moveDirection.x > 0)
         {
-            spriteRenderer.flipX = false;
+            SetFacingDirection(FacingDirection.Right);
+        }
+    }
+
+    public void SetFacingDirection(FacingDirection direction) 
+    {
+        if(direction != facingDirection)
+        {
+            if(direction == FacingDirection.Left)
+            {
+                spriteRenderer.flipX = true;
+            }
+            else
+            {
+                spriteRenderer.flipX = false;
+            }
+
+            facingDirection = direction;
+            onFacingDirectionChanged?.Invoke();
         }
     }
 
