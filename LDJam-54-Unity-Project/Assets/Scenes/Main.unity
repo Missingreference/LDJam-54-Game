@@ -962,7 +962,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   facingDirection: 1
-  spriteHoverSpeed: 0.25
+  spriteHoverSpeed: 0.5
   spriteHoverDistance: 0.05
   attackTriggers: []
 --- !u!212 &1765065968

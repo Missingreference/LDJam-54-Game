@@ -11,7 +11,7 @@ public class Human : Actor
     public FacingDirection facingDirection = FacingDirection.Right;
 
     //Hover
-    public float spriteHoverSpeed = 0.25f;
+    public float spriteHoverSpeed = 0.5f;
     public float spriteHoverDistance = 0.05f;
 
     //Attack
@@ -38,6 +38,7 @@ public class Human : Actor
 
 
     private Sprite m_MainSprite;
+    private Sprite[] m_IdleSpriteSheet;
 
     private float m_HoverTimer = 0.0f;
     private float m_DamageFlashTimer = 0.0f;
@@ -52,9 +53,12 @@ public class Human : Actor
     {
         base.Awake();
 
+        moveSpeed = 1.0f;
+
         gameObject.layer = 7; //Player Movement
 
         m_MainSprite = Resources.Load<Sprite>("Sprites/Character/Character1");
+        m_IdleSpriteSheet = Resources.LoadAll<Sprite>("Sprites/Character/Character_Idle_Sheet");
         spriteRenderer.sprite = m_MainSprite;
         spriteRenderer.gameObject.layer = 6; //Player Body
 
@@ -110,6 +114,10 @@ public class Human : Actor
         float height = Easing.Sinusoidal.InOut(spriteHoverDistance * -0.25f, spriteHoverDistance * 0.75f, percent);
 
         spriteRenderer.transform.localPosition = new Vector3(spriteRenderer.transform.localPosition.x, height, spriteRenderer.transform.localPosition.z);
+
+        //Choose Sprite
+        percent = m_HoverTimer;
+        spriteRenderer.sprite = m_IdleSpriteSheet[(int)(m_IdleSpriteSheet.Length * percent)];
     }
 
     private void AnimateDamageFlash()
