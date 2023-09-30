@@ -41,8 +41,12 @@ public class Human : Actor
     protected override void Awake()
     {
         base.Awake();
+
+        gameObject.layer = 7; //Player Movement
+
         m_MainSprite = Resources.Load<Sprite>("Sprites/Character/Character1");
         spriteRenderer.sprite = m_MainSprite;
+        spriteRenderer.gameObject.layer = 6; //Player Body
 
         bodyTrigger = spriteRenderer.gameObject.AddComponent<BoxCollider2D>();
         bodyTrigger.isTrigger = true;
@@ -201,7 +205,7 @@ public class Human : Actor
             damageTrigger = damageTriggerObject.AddComponent<DamageTrigger>();
             trigger = damageTrigger.CreateTrigger<BoxCollider2D>();
 
-
+            damageTrigger.trigger.callbackLayers = 1 << 8;
         }
 
         m_AttackTriggers.Add(damageTrigger);
