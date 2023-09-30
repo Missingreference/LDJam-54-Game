@@ -36,6 +36,7 @@ public class Actor : MonoBehaviour
         rigidbody.drag = 10.0f;
         rigidbody.freezeRotation = true;
         rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
     }
 
     public virtual void TakeDamage(int damage)
