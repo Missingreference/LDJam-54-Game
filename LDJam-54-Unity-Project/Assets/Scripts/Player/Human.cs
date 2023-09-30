@@ -193,6 +193,8 @@ public class Human : Actor
 
     public override void TakeDamage(int damage)
     {
+        base.TakeDamage(damage);
+
         m_DamageFlashCount = damageFlashCount;
     }
 
