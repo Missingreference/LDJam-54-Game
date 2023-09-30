@@ -90,6 +90,8 @@ public class Actor : MonoBehaviour
 
     public void Move(Vector2 moveDirection)
     {
+        if(!isAlive) return;
+
         if(moveDirection.magnitude > 1.0f)
         {
             this.moveDirection = moveDirection.normalized;
