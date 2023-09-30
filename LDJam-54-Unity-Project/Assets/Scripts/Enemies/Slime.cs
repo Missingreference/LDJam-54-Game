@@ -12,6 +12,7 @@ public class Slime : Enemy
     public float moveWaitTime { get; private set; } = 1.0f;
 
     public CircleCollider2D movementCollider;
+    public CircleCollider2D bodyCollider;
 
     private float m_DamageFlashTimer = 0.0f;
     private float m_DamageFlashCount = 0;
@@ -27,8 +28,11 @@ public class Slime : Enemy
     protected override void Awake()
     {
         base.Awake();
+
+        gameObject.layer = 9;
         m_Sprite = Resources.Load<Sprite>("Sprites/Enemy/Slime_Jim");
         spriteRenderer.sprite = m_Sprite;
+        spriteRenderer.gameObject.layer = 8;
 
         moveSpeed = 5.0f;
 
@@ -42,14 +46,20 @@ public class Slime : Enemy
         movementCollider.isTrigger = false;
         movementCollider.radius = 0.2f;
 
+        bodyCollider = spriteRenderer.gameObject.AddComponent<CircleCollider2D>();
+        bodyCollider.isTrigger = false;
+        bodyCollider.radius = 0.225f;
+
         m_DamageTrigger = damageTriggerObject.AddComponent<DamageTrigger>();
 
         CircleCollider2D damageCollider = m_DamageTrigger.CreateTrigger<CircleCollider2D>();
         damageCollider.radius = 0.225f;
+        damageCollider.callbackLayers = 1 << 6;
 
         m_DamageTrigger.persistentDamage = true;
         m_DamageTrigger.persistentDamageTime = 0.85f;
         m_DamageTrigger.onDealDamage += DealDamage;
+
 
     }
 
