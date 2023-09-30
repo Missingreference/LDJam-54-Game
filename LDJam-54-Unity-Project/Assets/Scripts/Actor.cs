@@ -39,6 +39,19 @@ public class Actor : MonoBehaviour
         rigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
     }
 
+    public void SetHealth(int value)
+    {
+        if(value <= 0)
+        {
+            health = 0;
+            Die();
+        }
+        else
+        {
+            health = value;
+        }
+    }
+
     public virtual void TakeDamage(int damage)
     {
         if(health - damage <= 0)
