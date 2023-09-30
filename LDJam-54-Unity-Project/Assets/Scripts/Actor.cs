@@ -7,7 +7,7 @@ public class Actor : MonoBehaviour
 {
 
     public int health { get; private set; } = 100;
-    public float moveSpeed { get; set; } = 5000.0f;
+    public float moveSpeed { get; set; } = 50;
     public Vector2 moveDirection { get; private set; } = Vector2.zero;
     public bool isAlive { get; private set; } = true;
 

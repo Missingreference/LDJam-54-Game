@@ -243,7 +243,7 @@ public class Human : Actor
 
     protected override void OnMove()
     {
-        rigidbody.AddForce(moveDirection * Time.fixedDeltaTime * moveSpeed, ForceMode2D.Force);
+        rigidbody.AddForce(moveDirection * moveSpeed, ForceMode2D.Force);
 
         if(moveDirection.x < 0)
         {
