@@ -11,7 +11,7 @@ public class MainMenu : MonoBehaviour
     Button playButton;
     Button quitButton;
     WeaponSelect weaponSelect;
-    float animateTime = 2f;
+    float animateTime = 0.5f;
     float animateTimer;
     Image blackFadeOut;
    
@@ -65,6 +65,7 @@ public class MainMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if (animateTimer >= 0)
         {
             animateTimer -= Time.deltaTime;

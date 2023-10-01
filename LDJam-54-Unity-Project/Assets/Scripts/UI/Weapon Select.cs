@@ -44,7 +44,7 @@ public class WeaponSelect : MonoBehaviour
         //fadinblack image starts as clear 
         fadeInBlackImage.color = Color.clear;
 
-        Debug.Log(fadeTimer);
+        
         
         
     }
