@@ -82,7 +82,7 @@ public class PauseMenu : MonoBehaviour
 
             backGroundImage.color = Easing.Linear.InOut(Color.clear, anotherColor, percent);
 
-            Debug.Log(backGroundImage.color);
+           
 
 
             

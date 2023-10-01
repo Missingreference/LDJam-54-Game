@@ -7,21 +7,21 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
 
-    Button startButton;
+    Button playButton;
     Button quitButton;
-    CharacterSelect characterSelect; 
+    WeaponSelect weaponSelect; 
 
     // Start is called before the first frame update
     void Start()
     {
         // Got Start Button transform
-        startButton = transform.Find("Start Button").GetComponent<Button>();
+        playButton = transform.Find("Play Button").GetComponent<Button>();
 
         //Get Quit Button Transform
         quitButton = transform.Find("Quit Button").GetComponent<Button>();
 
         // Get character select script
-        characterSelect = FindObjectOfType<CharacterSelect>(true);
+        weaponSelect = FindObjectOfType<WeaponSelect>(true);
 
 
 
@@ -31,7 +31,7 @@ public class MainMenu : MonoBehaviour
 
 
         //When Start Button is click, do OnStartButtonClick function
-        startButton.onClick.AddListener(OnStartButtonClick);
+        playButton.onClick.AddListener(OnPlayButtonClick);
     }
 
   
@@ -41,12 +41,12 @@ public class MainMenu : MonoBehaviour
         Application.Quit(); 
     }
 
-    void OnStartButtonClick()
+    void OnPlayButtonClick()
     {
         //deactivate main menu canvas
         gameObject.SetActive(false);
         //activate character select canvas
-        characterSelect.gameObject.SetActive(true);
+        weaponSelect.gameObject.SetActive(true);
         
     }
 
