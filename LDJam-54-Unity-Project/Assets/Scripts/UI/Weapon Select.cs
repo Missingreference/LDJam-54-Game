@@ -14,6 +14,7 @@ public class WeaponSelect : MonoBehaviour
     Image fadeInBlackImage;
     float fadeTime;
     float fadeTimer;
+    bool startButtonClicked = false;
 
 
 
@@ -43,6 +44,7 @@ public class WeaponSelect : MonoBehaviour
         //fadinblack image starts as clear 
         fadeInBlackImage.color = Color.clear;
 
+        Debug.Log(fadeTimer);
         
         
     }
@@ -53,6 +55,8 @@ public class WeaponSelect : MonoBehaviour
         gameObject.SetActive(false);
         //Main menu canvas is set active
         mainMenu.gameObject.SetActive(true);
+
+        
     }
 
     void OnStartButtonClick()
@@ -62,8 +66,8 @@ public class WeaponSelect : MonoBehaviour
         fadeTime = 2.0f;
         fadeTimer = fadeTime;
 
+        startButtonClicked = true;
 
-        
 
     }
 
@@ -72,7 +76,7 @@ public class WeaponSelect : MonoBehaviour
     {
         
         
-        if (fadeTimer > 0)
+        if (fadeTimer >= 0 && startButtonClicked == true)
         {
            
             fadeTimer -= Time.deltaTime;

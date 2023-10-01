@@ -19,7 +19,8 @@ public class PauseMenu : MonoBehaviour
     RectTransform rectTransform;
     Image backGroundImage;
     Image fadeIntoBlack;
-    bool resumeFunctionTrue; 
+    bool resumeFunctionTrue;
+    Color32 newColor = new Color32(63, 63, 63, 200);
     
 
 
@@ -62,7 +63,9 @@ public class PauseMenu : MonoBehaviour
 
     void OnResumeButtonClick()
     {
-
+        resumeFunctionTrue = true;
+        animateDownTime = 1f;
+        animateDownTimer = animateDownTime;
 
         //gameObject.SetActive(false);
     }
@@ -70,23 +73,26 @@ public class PauseMenu : MonoBehaviour
     void OnQuitButtonClick()
     {
         //resumeFunctionTrue = true; 
-        SceneManager.LoadScene("Main Menu");
+        //SceneManager.LoadScene("Main Menu");
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (animateDownTimer >= 0)
+        if (animateDownTimer >= 0 && resumeFunctionTrue == false)
         {
             animateDownTimer -= Time.deltaTime;
+
             float percent = 1f - (animateDownTimer / animateDownTime);
+
             float easingPosition = Easing.Quadratic.InOut(startDownPosition, endDownPosition, percent);
+
             rectTransform.localPosition = new Vector3(0, easingPosition, 0);
             //rectTransform.localPosition = new Vector3(0, ((endPosition - startPosition)* percent) + startPosition, 0);
 
             
-            Color32 newColor = new Color32(63, 63, 63, 200);
+            
             
 
             backGroundImage.color = Easing.Linear.InOut(Color.clear, newColor, percent);
@@ -94,9 +100,20 @@ public class PauseMenu : MonoBehaviour
 
         }
         
-        //if(resumeFunctionTrue == true && animateDownTimer >= 0)
-        //{
-        //}
+        if(resumeFunctionTrue == true && animateDownTimer >= 0)
+        {
+            animateDownTimer -= Time.deltaTime;
+
+            float percent = 1f - (animateDownTimer / animateDownTime);
+
+            float easingPosition2 = Easing.Quadratic.InOut(endDownPosition, startDownPosition, percent);
+
+            rectTransform.localPosition = new Vector3(0, easingPosition2, 0);
+
+            backGroundImage.color = Easing.Linear.InOut(newColor, Color.clear, percent);
+
+            
+        }
 
 
 
