@@ -10,12 +10,16 @@ public class PauseMenu : MonoBehaviour
 
     Button quitButton;
     Button resumeButton;
-    float startPosition = 425f;
-    float endPosition = 0f;
-    float animateTime = 1.0f;
-    float animateTimer;
+    float startDownPosition = 425f;
+    float endDownPosition = 0f;
+    float animateDownTime = 1.0f;
+    float animateDownTimer;
+    float animateUpTime;
+    float animateUpTimer;
     RectTransform rectTransform;
     Image backGroundImage;
+    Image fadeIntoBlack;
+    bool resumeFunctionTrue; 
     
 
 
@@ -29,7 +33,7 @@ public class PauseMenu : MonoBehaviour
         Transform pauseMenuTransform = transform.Find("Background").Find("Pause Menu");
 
         rectTransform = (RectTransform)pauseMenuTransform;
-        rectTransform.localPosition = new Vector3(0, startPosition, 0);
+        rectTransform.localPosition = new Vector3(0, startDownPosition, 0);
 
 
         backGroundImage = transform.Find("Background").GetComponent<Image>();
@@ -49,45 +53,50 @@ public class PauseMenu : MonoBehaviour
         //when quit button is clicked, do OnQuitButtonClick Function
         quitButton.onClick.AddListener(OnQuitButtonClick);
 
-        animateTimer = animateTime;
+        animateDownTimer = animateDownTime;
+
+        fadeIntoBlack = FindObjectOfType<FadeOut>().transform.Find("Fade Out Black Image").GetComponent<Image>();
 
         
     }
 
     void OnResumeButtonClick()
     {
-        gameObject.SetActive(false);
+
+
+        //gameObject.SetActive(false);
     }
 
     void OnQuitButtonClick()
     {
+        //resumeFunctionTrue = true; 
         SceneManager.LoadScene("Main Menu");
-
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (animateTimer >= 0)
+        if (animateDownTimer >= 0)
         {
-            animateTimer -= Time.deltaTime;
-            float percent = 1f - (animateTimer / animateTime);
-            float easingPosition = Easing.Quadratic.InOut(startPosition, endPosition, percent);
+            animateDownTimer -= Time.deltaTime;
+            float percent = 1f - (animateDownTimer / animateDownTime);
+            float easingPosition = Easing.Quadratic.InOut(startDownPosition, endDownPosition, percent);
             rectTransform.localPosition = new Vector3(0, easingPosition, 0);
             //rectTransform.localPosition = new Vector3(0, ((endPosition - startPosition)* percent) + startPosition, 0);
 
             
             Color32 newColor = new Color32(63, 63, 63, 200);
-            Color anotherColor = newColor;
+            
 
-            backGroundImage.color = Easing.Linear.InOut(Color.clear, anotherColor, percent);
-
-           
-
-
+            backGroundImage.color = Easing.Linear.InOut(Color.clear, newColor, percent);
             
 
         }
+        
+        //if(resumeFunctionTrue == true && animateDownTimer >= 0)
+        //{
+        //}
 
 
 
