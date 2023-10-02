@@ -87,7 +87,6 @@ public class Human : Actor
         slashTriggerObject.transform.localEulerAngles = Vector3.zero;
         slashTriggerObject.transform.localScale = Vector3.one;
         slashTrigger = slashTriggerObject.AddComponent<HumanSlashTrigger>();
-        slashTrigger.onTrigger += 
     }
 
 
