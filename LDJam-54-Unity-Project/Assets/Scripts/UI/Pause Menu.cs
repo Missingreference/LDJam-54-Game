@@ -19,8 +19,14 @@ public class PauseMenu : MonoBehaviour
     bool resumeFunctionTrue;
     Color32 newColor = new Color32(63, 63, 63, 200);
     Slider pauseMenuVolumeSlider;
-    
+    GameDirector m_GameDirector;
 
+    public bool hiding { get; private set; } = false;
+
+    private void Awake()
+    {
+        m_GameDirector = FindObjectOfType<GameDirector>();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -70,13 +76,27 @@ public class PauseMenu : MonoBehaviour
         
     }
 
+    private void OnEnable()
+    {
+        hiding = false;
+    }
+
+    private void OnGamePause()
+    {
+        gameObject.SetActive(true);
+    }
+
     void OnResumeButtonClick()
     {
+        if(hiding) return;
+
+
         resumeFunctionTrue = true;
         
         animateDownTimer = animateDownTime;
+        hiding = true;
 
-        
+
     }
 
     
@@ -93,7 +113,7 @@ public class PauseMenu : MonoBehaviour
         //when pause menu opens, bring pause menu down and fade in back ground 
         if (animateDownTimer >= 0 && resumeFunctionTrue == false)
         {
-            animateDownTimer -= Time.deltaTime;
+            animateDownTimer -= Time.unscaledDeltaTime;
 
             float percent = 1f - (animateDownTimer / animateDownTime);
 
@@ -109,7 +129,7 @@ public class PauseMenu : MonoBehaviour
         // when resume button is clicked, bring pause menu back up and fade out background 
         if(resumeFunctionTrue == true && animateDownTimer >= 0)
         {
-            animateDownTimer -= Time.deltaTime;
+            animateDownTimer -= Time.unscaledDeltaTime;
 
             float percent = 1f - (animateDownTimer / animateDownTime);
 
@@ -122,13 +142,20 @@ public class PauseMenu : MonoBehaviour
             if (animateDownTimer <= 0)
             {
                 gameObject.SetActive(false);
+                m_GameDirector.Unpause();
                 resumeFunctionTrue = false;
                 animateDownTimer = animateDownTime;
             }
             
         }
 
-
+        if(!hiding)
+        {
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                OnResumeButtonClick();
+            }
+        }
 
     }
 }

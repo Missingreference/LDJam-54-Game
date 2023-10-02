@@ -1,18 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 public class DamageTrigger : MonoBehaviour
 {
     public Collider2D trigger { get; private set; }
-    public bool persistentDamage { get; set; }
+    public bool persistentDamage { get; set; } = false;
     public float persistentDamageTime { get; set; } = 0.5f;
 
     public Action<Actor> onDealDamage;
 
-    public List<Actor> damagedActors = new List<Actor>();
-    private List<float> damageTimers = new List<float>();
+    public ReadOnlyCollection<Actor> damagedActors => m_DamagedActors.AsReadOnly();
+
+    private List<Actor> m_DamagedActors = new List<Actor>();
+    private List<float> m_DamageTimers = new List<float>();
+
+    private List<Actor> m_ActorsWithinTrigger = new List<Actor>();
 
     public T CreateTrigger<T>() where T : Collider2D
     {
@@ -39,6 +44,8 @@ public class DamageTrigger : MonoBehaviour
                 return;
             }
         }
+
+        m_ActorsWithinTrigger.Add(actor);
 
         DamageActor(actor);
     }
@@ -68,21 +75,48 @@ public class DamageTrigger : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        
+        Actor actor = collision.GetComponent<Actor>();
+        if(actor == null)
+        {
+            if(collision.transform.parent == null)
+            {
+                return;
+            }
+
+            actor = collision.transform.parent.GetComponent<Actor>();
+
+            if(actor == null)
+            {
+                return;
+            }
+        }
+
+        m_ActorsWithinTrigger.Remove(actor);
     }
 
     private void DamageActor(Actor actor)
     {
-        if(!actor.isAlive || damagedActors.Contains(actor))
+        if(!actor.isAlive || m_DamagedActors.Contains(actor))
         {
             return;
         }
         else
         {
-            damagedActors.Add(actor);
+            m_DamagedActors.Add(actor);
             if(persistentDamage)
-                damageTimers.Add(persistentDamageTime);
+                m_DamageTimers.Add(persistentDamageTime);
             onDealDamage?.Invoke(actor);
+        }
+    }
+
+    public void ClearDamagedActors()
+    {
+        m_DamagedActors.Clear();
+        m_DamageTimers.Clear();
+
+        for(int i = 0; i < m_ActorsWithinTrigger.Count; i++)
+        {
+            DamageActor(m_ActorsWithinTrigger[i]);
         }
     }
 
@@ -90,19 +124,19 @@ public class DamageTrigger : MonoBehaviour
     {
         if(!persistentDamage) return;
 
-        for (int i = 0; i < damageTimers.Count; i++)
+        for (int i = 0; i < m_DamageTimers.Count; i++)
         {
-            float timer = damageTimers[i];
+            float timer = m_DamageTimers[i];
             timer -= Time.deltaTime;
             if(timer <= 0)
             {
-                damageTimers.RemoveAt(i);
-                damagedActors.RemoveAt(i);
+                m_DamageTimers.RemoveAt(i);
+                m_DamagedActors.RemoveAt(i);
                 i--;
             }
             else
             {
-                damageTimers[i] = timer;
+                m_DamageTimers[i] = timer;
             }
         }
     }

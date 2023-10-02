@@ -67,6 +67,7 @@ public class Actor : MonoBehaviour
     {
         isAlive = false;
         OnDeath();
+        onDeath?.Invoke();
     }
 
     protected virtual void OnDeath()

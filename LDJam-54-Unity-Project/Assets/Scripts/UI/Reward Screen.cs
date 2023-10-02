@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Elanetic.Tools;
+using System;
 
 
 public class RewardScreen : MonoBehaviour
 {
+    public Action onFinishReward;
+
+    public int abilityIndex = 0;
 
     Button confirmButton;
     Image rewardsBackground;
@@ -15,6 +19,10 @@ public class RewardScreen : MonoBehaviour
     bool confirmClick = false;
     Color32 newColor = new Color32(63, 63, 63, 200);
     CanvasGroup rewardsImage;
+
+    Button abilityPanelButton1;
+    Button abilityPanelButton2;
+    Button abilityPanelButton3;
 
 
 
@@ -33,7 +41,13 @@ public class RewardScreen : MonoBehaviour
         confirmButton = transform.Find("Image").Find("Confirm Button").GetComponent<Button>();
 
 
+        abilityPanelButton1 = transform.Find("Image").Find("Ability Panel 1").GetComponent<Button>();
+        abilityPanelButton2 = transform.Find("Image").Find("Ability Panel 2").GetComponent<Button>();
+        abilityPanelButton3 = transform.Find("Image").Find("Ability Panel 3").GetComponent<Button>();
 
+        abilityPanelButton1.onClick.AddListener(OnAbility1Pressed);
+        abilityPanelButton2.onClick.AddListener(OnAbility2Pressed);
+        abilityPanelButton3.onClick.AddListener(OnAbility3Pressed);
 
         //when confirm button is clicked, do function
         confirmButton.onClick.AddListener(OnConfirmButtonClick);
@@ -49,13 +63,26 @@ public class RewardScreen : MonoBehaviour
         animationTimer = animationTime;
     }
 
+    private void OnAbility1Pressed()
+    {
+        abilityIndex = 0;
+    }
+    private void OnAbility2Pressed()
+    {
+        abilityIndex = 1;
+    }
+    private void OnAbility3Pressed()
+    {
+        abilityIndex = 2;
+    }
+
     // Update is called once per frame
     void Update()
     {
         //when reward screen ope
         if (confirmClick == false && animationTimer >= 0f)
         {
-            animationTimer -= Time.deltaTime;
+            animationTimer -= Time.unscaledDeltaTime;
             float animationPercent = 1f - (animationTimer / animationTime);
             rewardsBackground.color = Easing.Linear.InOut(Color.clear, newColor, animationPercent);
             rewardsImage.alpha = Easing.Linear.InOut(0, 1, animationPercent);
@@ -64,7 +91,7 @@ public class RewardScreen : MonoBehaviour
         //when confirm is clicked, rewards menu and background fade away 
         if (confirmClick == true && animationTimer >= 0f)
         {
-            animationTimer -= Time.deltaTime;
+            animationTimer -= Time.unscaledDeltaTime;
             float animationPercent = 1f - (animationTimer / animationTime);
             rewardsBackground.color = Easing.Linear.InOut(newColor, Color.clear, animationPercent);
             rewardsImage.alpha = Easing.Linear.InOut(1,0,animationPercent);
@@ -75,6 +102,7 @@ public class RewardScreen : MonoBehaviour
                 gameObject.SetActive(false);
                 confirmClick = false;
                 animationTimer = animationTime;
+                onFinishReward?.Invoke();
 
             }
         }

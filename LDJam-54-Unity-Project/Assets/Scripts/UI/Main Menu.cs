@@ -98,7 +98,7 @@ public class MainMenu : MonoBehaviour
         //make fading image go from black to clear at start of main menu scene
         if (animateTimer >= 0)
         {
-            animateTimer -= Time.deltaTime;
+            animateTimer -= Time.unscaledDeltaTime;
 
             float animatePercent = 1 - (animateTimer / animateTime);
             

@@ -11,7 +11,7 @@ public class HumanWeapon : MonoBehaviour
     public float hoverDistance = 0.1f;
     public float followSpeed = 50.0f;
     public float attackFollowSpeed = 100.0f;
-    public Vector2 positionInFront = new Vector2(0.35f, 0.2f);
+    public Vector2 positionInFront = new Vector2(0.35f, 0.4f);
     public float postSwingWaitTime = 0.2f;
 
 

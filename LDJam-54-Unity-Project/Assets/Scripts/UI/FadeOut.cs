@@ -57,6 +57,8 @@ public class FadeOut : MonoBehaviour
 
     void OnGameOverQuitButtonClick()
     {
+        if(pauseMenu.hiding) return;
+
         fadeOutBlackImage.gameObject.SetActive(true);
         quitButtonClickTrue = true;
         fadeTime = 2f;
@@ -70,7 +72,7 @@ public class FadeOut : MonoBehaviour
         if (quitButtonClickTrue == false && fadeTimer >= 0)
         {
 
-            fadeTimer -= Time.deltaTime;
+            fadeTimer -= Time.unscaledDeltaTime;
             float fadePercent = 1f - (fadeTimer / fadeTime);
             fadeOutBlackImage.color = Easing.Linear.InOut(Color.black, Color.clear, fadePercent);
             
@@ -78,7 +80,7 @@ public class FadeOut : MonoBehaviour
         //if the quit button is clicked, fade to black  
         else if (quitButtonClickTrue == true && fadeTimer >= 0)
         {
-            fadeTimer -= Time.deltaTime;
+            fadeTimer -= Time.unscaledDeltaTime;
             float fadePercent = 1f - (fadeTimer / fadeTime);
             fadeOutBlackImage.color = Easing.Linear.InOut(Color.clear, Color.black, fadePercent);
 
@@ -88,6 +90,7 @@ public class FadeOut : MonoBehaviour
                 
                 pauseMenu.gameObject.SetActive(false);
                 gameOverMenu.gameObject.SetActive(false);
+                Time.timeScale = 1.0f;
                 SceneManager.LoadScene("Main Menu");
             }
 

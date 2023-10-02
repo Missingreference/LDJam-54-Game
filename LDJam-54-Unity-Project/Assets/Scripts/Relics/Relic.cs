@@ -2,17 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Relic : MonoBehaviour
+public abstract class Relic
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    static public Color commonColor => new Color(0.1f, 0.1f, 0.1f, 1.0f);
+    static public Color uncommonColor => new Color(0.1f, 1.0f, 0.1f, 1.0f);
+    static public Color rareColor => new Color(0.1f, 0.1f, 1.0f, 1.0f);
+    static public Color legendaryColor => new Color(0.3f, 0.1f, 0.5f, 1.0f);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public abstract RelicRarity rarity { get; }
 }

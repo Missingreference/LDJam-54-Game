@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Elanetic.Tools;
+using Unity.VisualScripting;
 
 public class Human : Actor
 {
@@ -49,11 +50,14 @@ public class Human : Actor
     private List<float> m_AttackSwipeTimers = new List<float>();
     private List<float> m_AttackDirections = new List<float>();
 
+    //Ability triggers
+    public HumanSlashTrigger slashTrigger;
+
     protected override void Awake()
     {
         base.Awake();
-
-        moveSpeed = 1.0f;
+        //SetHealth(1);
+        //moveSpeed = 1.0f;
 
         gameObject.layer = 7; //Player Movement
 
@@ -64,17 +68,27 @@ public class Human : Actor
 
         bodyTrigger = spriteRenderer.gameObject.AddComponent<BoxCollider2D>();
         bodyTrigger.isTrigger = true;
+        bodyTrigger.offset = new Vector2(0.0f, 0.35f);
         bodyTrigger.size = (spriteRenderer.bounds.extents * 2.0f) * 0.85f;
 
         movementCollider = gameObject.AddComponent<BoxCollider2D>();
         movementCollider.isTrigger = false;
+        movementCollider.offset = new Vector2(0.0f, 0.35f);
         movementCollider.size = (spriteRenderer.bounds.extents * 2.0f) * 0.9f;
 
         GameObject weaponObject = new GameObject("Weapon");
         weaponObject.transform.parent = transform;
         weapon = weaponObject.AddComponent<HumanWeapon>();
-        
+
+        //Ability triggers
+        GameObject slashTriggerObject = new GameObject("Slash Trigger");
+        slashTriggerObject.transform.parent = transform;
+        slashTriggerObject.transform.localPosition = Vector3.zero;
+        slashTriggerObject.transform.localEulerAngles = Vector3.zero;
+        slashTriggerObject.transform.localScale = Vector3.one;
+        slashTrigger = slashTriggerObject.AddComponent<HumanSlashTrigger>();
     }
+
 
 
     protected override void Update()
@@ -215,7 +229,7 @@ public class Human : Actor
             damageTrigger = m_PooledAttackTriggers[m_PooledAttackTriggers.Count - 1];
             damageTrigger.gameObject.SetActive(true);
             trigger = (BoxCollider2D)damageTrigger.trigger;
-            damageTrigger.damagedActors.Clear();
+            damageTrigger.ClearDamagedActors();
 
             m_PooledAttackTriggers.RemoveAt(m_PooledAttackTriggers.Count - 1);
         }

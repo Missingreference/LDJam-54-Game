@@ -82,7 +82,7 @@ public class WeaponSelect : MonoBehaviour
         if (fadeTimer >= 0 && startButtonClicked == true)
         {
            
-            fadeTimer -= Time.deltaTime;
+            fadeTimer -= Time.unscaledDeltaTime;
             float fadePercent = 1f - (fadeTimer / fadeTime);
             fadeInBlackImage.color = Easing.Linear.InOut(Color.clear, Color.black, fadePercent);
 

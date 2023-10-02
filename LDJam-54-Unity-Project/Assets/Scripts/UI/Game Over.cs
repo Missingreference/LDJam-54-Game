@@ -49,7 +49,7 @@ public class GameOver : MonoBehaviour
         if (animateTimer >= 0)
         {
             
-            animateTimer -= Time.deltaTime;
+            animateTimer -= Time.unscaledDeltaTime;
             float animatePercent = 1f - (animateTimer / animateTime);
             gameOverBackgroundImage.color = Easing.Linear.InOut(Color.clear, newColor, animatePercent);
             gameOverCanvasGroup.alpha = Easing.Linear.InOut(0, 1, animatePercent);
