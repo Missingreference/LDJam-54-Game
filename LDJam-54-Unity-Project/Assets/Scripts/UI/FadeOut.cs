@@ -13,7 +13,9 @@ public class FadeOut : MonoBehaviour
     Image fadeOutBlackImage;
     bool quitButtonClickTrue = false;
     PauseMenu pauseMenu;
-    Button quitButton;
+    Button pauseMenuQuitButton;
+    GameOver gameOverMenu;
+    Button gameOverQuitButton;
     
     // Start is called before the first frame update
     void Start()
@@ -21,17 +23,28 @@ public class FadeOut : MonoBehaviour
         //get transform of fade to clear image
         fadeOutBlackImage = transform.Find("Fade Out Black Image").GetComponent<Image>();
 
-        
-
-        fadeTimer = fadeTime;
-
         //get quit button transform in the pause menu
         pauseMenu = FindObjectOfType<PauseMenu>(true);
-        quitButton = pauseMenu.transform.Find("Background").Find("Pause Menu").Find("Quit Button").GetComponent<Button>();
+        pauseMenuQuitButton = pauseMenu.transform.Find("Background").Find("Pause Menu").Find("Quit Button").GetComponent<Button>();
 
-        //when quit button i clicked, do function OnPauseMenuQuitButtonClick
-        quitButton.onClick.AddListener(OnPauseMenuQuitButtonClick);
+        //get quit button transform in the game over menu
+        gameOverMenu = FindObjectOfType<GameOver>(true);
+        gameOverQuitButton = gameOverMenu.transform.Find("Game Over Background").Find("Image").Find("Quit Button").GetComponent<Button>();
+
+
+
+        //when pause menu quit button is clicked, do function OnPauseMenuQuitButtonClick
+        pauseMenuQuitButton.onClick.AddListener(OnPauseMenuQuitButtonClick);
+
+        //when game over quit button is clicked, do function
+        gameOverQuitButton.onClick.AddListener(OnGameOverQuitButtonClick);
+
+
+
+        fadeTimer = fadeTime;
     }
+
+
 
     void OnPauseMenuQuitButtonClick()
     {
@@ -39,14 +52,21 @@ public class FadeOut : MonoBehaviour
         quitButtonClickTrue = true;
         fadeTime = 2f;
         fadeTimer = fadeTime;
-        //goToMainMenuTrue = true;
+       
+    }
 
+    void OnGameOverQuitButtonClick()
+    {
+        fadeOutBlackImage.gameObject.SetActive(true);
+        quitButtonClickTrue = true;
+        fadeTime = 2f;
+        fadeTimer = fadeTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if time is not 0, fade
+        //fade into the beginning of game scene
         if (quitButtonClickTrue == false && fadeTimer >= 0)
         {
 
@@ -55,18 +75,24 @@ public class FadeOut : MonoBehaviour
             fadeOutBlackImage.color = Easing.Linear.InOut(Color.black, Color.clear, fadePercent);
             
         }
+        //if the quit button is clicked, fade to black  
         else if (quitButtonClickTrue == true && fadeTimer >= 0)
         {
             fadeTimer -= Time.deltaTime;
             float fadePercent = 1f - (fadeTimer / fadeTime);
             fadeOutBlackImage.color = Easing.Linear.InOut(Color.clear, Color.black, fadePercent);
 
+            //once fade is done, take us to main menu scene
             if (fadeTimer <= 0)
             {
+                
+                pauseMenu.gameObject.SetActive(false);
+                gameOverMenu.gameObject.SetActive(false);
                 SceneManager.LoadScene("Main Menu");
             }
 
         }
+        //once fade is complete, set the fadeing image inactive 
         else
         {
             fadeOutBlackImage.gameObject.SetActive(false);

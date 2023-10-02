@@ -31,17 +31,25 @@ public class MainMenu : MonoBehaviour
         // Get character select script
         weaponSelect = FindObjectOfType<WeaponSelect>(true);
 
+        //Get fading image transform
         blackFadeOut = transform.Find("Black Fade Out").GetComponent<Image>();
 
-        blackFadeOut.color = Color.black;
+        
+
+
 
         //When Quit Button is clicked, do OnQuitButtonClick function
         quitButton.onClick.AddListener(OnQuitButtonClick);
 
 
-
         //When Start Button is click, do OnStartButtonClick function
         playButton.onClick.AddListener(OnPlayButtonClick);
+
+
+
+
+        //set intital fadig image color to black
+        blackFadeOut.color = Color.black;
 
         animateTimer = animateTime; 
     }
@@ -65,7 +73,7 @@ public class MainMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //make fading image go from black to clear at start of main menu scene
         if (animateTimer >= 0)
         {
             animateTimer -= Time.deltaTime;
@@ -76,6 +84,7 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
+            //make fading image inactive so we can still click buttons after it is done animating 
             blackFadeOut.gameObject.SetActive(false);
         }
 

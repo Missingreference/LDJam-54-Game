@@ -31,6 +31,9 @@ public class WeaponSelect : MonoBehaviour
         backButton = transform.Find("Back Button").GetComponent<Button>();
 
         //Get FadeInBlack image transform
+        fadeInBlackImage = transform.Find("Fade In Black Image").GetComponent<Image>();
+
+
 
 
         //When Main Menu Button is clicked, do OnMainMenuButtonClick function
@@ -39,7 +42,7 @@ public class WeaponSelect : MonoBehaviour
         //When Done Button is clicked, do OnDoneButtonClick function
         startButton.onClick.AddListener(OnStartButtonClick);
 
-        fadeInBlackImage = transform.Find("Fade In Black Image").GetComponent<Image>();
+        
 
         //fadinblack image starts as clear 
         fadeInBlackImage.color = Color.clear;
@@ -75,7 +78,7 @@ public class WeaponSelect : MonoBehaviour
     void Update()
     {
         
-        
+        //if start button is clicked, fade to black
         if (fadeTimer >= 0 && startButtonClicked == true)
         {
            
@@ -83,6 +86,7 @@ public class WeaponSelect : MonoBehaviour
             float fadePercent = 1f - (fadeTimer / fadeTime);
             fadeInBlackImage.color = Easing.Linear.InOut(Color.clear, Color.black, fadePercent);
 
+            //when fading animation is done, go to game scene
             if(fadeTimer <= 0)
             {
                 SceneManager.LoadScene("Game");
