@@ -216,6 +216,8 @@ public class Slime : Enemy
         m_DamageTrigger.onDealDamage -= DealDamage;
         Destroy(m_DamageTrigger.gameObject);
         spriteRenderer.color = Color.black;
+
+        Destroy(gameObject);
     }
 
 }

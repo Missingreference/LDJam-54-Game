@@ -38,6 +38,13 @@ public class EarthAbility : AttackAbility
         GameObject spriteRendererObject = new GameObject("Sprite");
         spriteRendererObject.transform.parent = transform;
         spriteRenderer = spriteRendererObject.AddComponent<SpriteRenderer>();
+
+        damageTrigger.onDealDamage += (Actor actor) =>
+        {
+            actor.TakeDamage(5);
+        };
+
+        trigger.callbackLayers = 1 << 8;
     }
 
     protected override void InitiateAttack()
@@ -45,7 +52,7 @@ public class EarthAbility : AttackAbility
 
 
 
-        m_DirectionVector = ((Vector2)transform.position - target).normalized;
+        m_DirectionVector = (target - (Vector2)transform.position).normalized;
         m_DirectionAngle = Vector2ToDegrees(m_DirectionVector);
 
         trigger.size = attackSize;

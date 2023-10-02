@@ -21,6 +21,7 @@ public class SmiteAbility : AttackAbility
         attackSpeed = 1.0f;
 
         trigger = damageTrigger.CreateTrigger<CircleCollider2D>();
+
         GameObject spriteRendererObject = new GameObject("Sprite");
         spriteRendererObject.transform.parent = transform;
         spriteRenderer = spriteRendererObject.AddComponent<SpriteRenderer>();
@@ -32,6 +33,7 @@ public class SmiteAbility : AttackAbility
         {
             actor.TakeDamage(5);
         };
+        trigger.callbackLayers = 1 << 8;
     }
 
     protected override void InitiateAttack()

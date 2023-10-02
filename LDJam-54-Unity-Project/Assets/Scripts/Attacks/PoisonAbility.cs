@@ -28,8 +28,19 @@ public class PoisonAbility : AttackAbility
 
         GameObject spriteRendererObject = new GameObject("Sprite");
         spriteRendererObject.transform.parent = transform;
+        spriteRendererObject.transform.localPosition = Vector3.zero;
+        spriteRendererObject.transform.localEulerAngles = Vector3.zero;
+        spriteRendererObject.transform.localScale = Vector3.one;
         spriteRenderer = spriteRendererObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = -1;
+
+        damageTrigger.onDealDamage += (Actor actor) => 
+        {
+            actor.TakeDamage(5);
+
+        };
+        trigger.callbackLayers = 1 << 8;
+
     }
 
     protected override void InitiateAttack()
@@ -40,7 +51,7 @@ public class PoisonAbility : AttackAbility
         //m_DirectionVector = ((Vector2)transform.position - target).normalized;
         //m_DirectionAngle = Vector2ToDegrees(m_DirectionVector);
 
-        trigger.radius = 2.0f;
+        trigger.radius = 0.8f;
 
         damageTrigger.gameObject.SetActive(true);
 

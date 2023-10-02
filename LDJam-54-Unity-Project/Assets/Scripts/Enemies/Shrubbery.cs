@@ -241,4 +241,9 @@ public class Shrubbery : Enemy
     {
         actor.TakeDamage(5);
     }
+
+    protected override void OnDeath()
+    {
+        Destroy(gameObject);
+    }
 }

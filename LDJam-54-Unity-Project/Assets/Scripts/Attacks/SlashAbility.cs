@@ -36,6 +36,7 @@ public class SlashAbility : AttackAbility
         {
             actor.TakeDamage(5);
         };
+        trigger.callbackLayers = 1 << 8;
     }
 
     protected override void InitiateAttack()

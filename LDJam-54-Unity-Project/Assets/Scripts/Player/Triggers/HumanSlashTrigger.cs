@@ -19,6 +19,7 @@ public class HumanSlashTrigger : MonoBehaviour
 
     void Awake()
     {
+        gameObject.layer = 11;
         trigger = gameObject.AddComponent<CircleCollider2D>();
         trigger.radius = 1.0f;
         trigger.callbackLayers = 1 << 8;

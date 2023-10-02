@@ -39,7 +39,7 @@ public class ThrowKnifeAbility : AttackAbility
 
     protected override void InitiateAttack()
     {
-        m_DirectionVector = ((Vector2)transform.position - target).normalized;
+        m_DirectionVector = (target - (Vector2)transform.position).normalized;
         m_DirectionAngle = Vector2ToDegrees(m_DirectionVector);
 
         trigger.size = new Vector2(0.3f, 0.7f);

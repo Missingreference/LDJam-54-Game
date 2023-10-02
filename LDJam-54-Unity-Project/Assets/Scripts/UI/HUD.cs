@@ -68,6 +68,7 @@ public class HUD : MonoBehaviour
     private void OnWaveStart()
     {
         m_NewWaveImage.gameObject.SetActive(true);
+        m_NewWaveDiplayTimer = 0.0f;
         m_NewWaveText.text = "Wave " + m_GameDirector.currentStage;
         m_WaveText.text = "Wave: " + m_GameDirector.currentStage;
     }

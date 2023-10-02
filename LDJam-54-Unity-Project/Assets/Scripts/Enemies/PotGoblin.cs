@@ -104,6 +104,12 @@ public class PotGoblin : Enemy
         }
     }
 
+
+    protected override void OnDeath()
+    {
+        Destroy(gameObject);
+    }
+
     public void Throw()
     {
         if(m_Enemy == null || !m_Enemy.isAlive)

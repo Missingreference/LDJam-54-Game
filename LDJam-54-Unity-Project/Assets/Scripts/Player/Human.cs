@@ -52,6 +52,14 @@ public class Human : Actor
 
     //Ability triggers
     public HumanSlashTrigger slashTrigger;
+    public HumanCleaveTrigger cleaveTrigger;
+    public HumanEarthTrigger earthTrigger;
+    public HumanPoisonTrigger poisonTrigger;
+
+    public HumanSmiteTrigger smiteTrigger;
+    public HumanThrowKnifeTrigger knifeThrowTrigger;
+
+    public RelicPickerUpper relicPickerUpper;
 
     protected override void Awake()
     {
@@ -71,6 +79,9 @@ public class Human : Actor
         bodyTrigger.offset = new Vector2(0.0f, 0.35f);
         bodyTrigger.size = (spriteRenderer.bounds.extents * 2.0f) * 0.85f;
 
+        relicPickerUpper = bodyTrigger.AddComponent<RelicPickerUpper>();
+        
+
         movementCollider = gameObject.AddComponent<BoxCollider2D>();
         movementCollider.isTrigger = false;
         movementCollider.offset = new Vector2(0.0f, 0.35f);
@@ -87,6 +98,51 @@ public class Human : Actor
         slashTriggerObject.transform.localEulerAngles = Vector3.zero;
         slashTriggerObject.transform.localScale = Vector3.one;
         slashTrigger = slashTriggerObject.AddComponent<HumanSlashTrigger>();
+
+        /*
+        GameObject knifeThrowTriggerObject = new GameObject("Knife Throw Trigger");
+        knifeThrowTriggerObject.transform.parent = transform;
+        knifeThrowTriggerObject.transform.localPosition = Vector3.zero;
+        knifeThrowTriggerObject.transform.localEulerAngles = Vector3.zero;
+        knifeThrowTriggerObject.transform.localScale = Vector3.one;
+        knifeThrowTrigger = knifeThrowTriggerObject.AddComponent<HumanThrowKnifeTrigger>();
+        */
+
+        GameObject cleaveTriggerObject = new GameObject("Cleave Trigger");
+        cleaveTriggerObject.transform.parent = transform;
+        cleaveTriggerObject.transform.localPosition = Vector3.zero;
+        cleaveTriggerObject.transform.localEulerAngles = Vector3.zero;
+        cleaveTriggerObject.transform.localScale = Vector3.one;
+        cleaveTrigger = cleaveTriggerObject.AddComponent<HumanCleaveTrigger>();
+        
+
+        GameObject earthTriggerObject = new GameObject("Earth Trigger");
+        earthTriggerObject.transform.parent = transform;
+        earthTriggerObject.transform.localPosition = Vector3.zero;
+        earthTriggerObject.transform.localEulerAngles = Vector3.zero;
+        earthTriggerObject.transform.localScale = Vector3.one;
+        earthTrigger = earthTriggerObject.AddComponent<HumanEarthTrigger>();
+        
+        
+        GameObject poisonTriggerObject = new GameObject("Poison Trigger");
+        poisonTriggerObject.transform.parent = transform;
+        poisonTriggerObject.transform.localPosition = Vector3.zero;
+        poisonTriggerObject.transform.localEulerAngles = Vector3.zero;
+        poisonTriggerObject.transform.localScale = Vector3.one;
+        poisonTrigger = poisonTriggerObject.AddComponent<HumanPoisonTrigger>();
+        
+        GameObject smiteTriggerObject = new GameObject("Smite Trigger");
+        smiteTriggerObject.transform.parent = transform;
+        smiteTriggerObject.transform.localPosition = Vector3.zero;
+        smiteTriggerObject.transform.localEulerAngles = Vector3.zero;
+        smiteTriggerObject.transform.localScale = Vector3.one;
+        smiteTrigger = smiteTriggerObject.AddComponent<HumanSmiteTrigger>();
+
+        //slashTriggerObject.gameObject.SetActive(false);
+        cleaveTriggerObject.gameObject.SetActive(false);
+        earthTriggerObject.gameObject.SetActive(false);
+        poisonTriggerObject.gameObject.SetActive(false);
+        smiteTriggerObject.gameObject.SetActive(false);
     }
 
 
