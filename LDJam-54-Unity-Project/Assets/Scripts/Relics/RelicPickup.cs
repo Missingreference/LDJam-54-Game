@@ -18,6 +18,8 @@ public class RelicPickup : MonoBehaviour
     public BoxCollider2D trigger { get; private set; }
 
 
+    private float m_PickupDelay = 1.5f;
+
     private void Awake()
     {
         if(m_CommonSprite == null)
@@ -49,6 +51,7 @@ public class RelicPickup : MonoBehaviour
 
         trigger = gameObject.AddComponent<BoxCollider2D>();
         trigger.isTrigger = true;
+        trigger.enabled = false;
 
     }
 
@@ -60,6 +63,15 @@ public class RelicPickup : MonoBehaviour
 
     private void Update()
     {
+        if(m_PickupDelay > 0)
+        {
+            m_PickupDelay -= Time.deltaTime;
+        }
+        else
+        {
+            trigger.enabled = true;
+        }
+
         //Animate light
         animateTimer += Time.deltaTime;
         if(animateTimer >= animateTime) 
