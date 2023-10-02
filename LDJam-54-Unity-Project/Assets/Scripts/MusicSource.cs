@@ -14,7 +14,7 @@ public class MusicSource : MonoBehaviour
     AudioClip gameplaySong4;
     AudioClip gameplaySong5;
     AudioClip gameplaySong6;
-    static public float volume = 0.65f;
+    static public float volume = 0.4f;
 
     // Start is called before the first frame update
     void Start()

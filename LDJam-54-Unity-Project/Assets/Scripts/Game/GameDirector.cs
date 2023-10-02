@@ -20,32 +20,32 @@ public class GameDirector : MonoBehaviour
     public Action onPlayerDeath;
     public Action<Relic> onRelicPickup;
 
-    public float commonRelicWeight = 0.1f;
-    public float uncommonRelicWeight = 0.05f;
-    public float rareRelicWeight = 0.0175f;
-    public float legendaryRelicWeight = 0.005f;
+    public float commonRelicWeight { get; set; } = 0.1f;
+    public float uncommonRelicWeight { get; set; } = 0.05f;
+    public float rareRelicWeight { get; set; } = 0.0175f;
+    public float legendaryRelicWeight { get; set; } = 0.005f;
 
-    public int commonRelicHealAmount = 1;
-    public int uncommonRelicHealAmount = 2;
-    public int rareRelicHealAmount = 5;
-    public int legendaryRelicHealAmount = 10;
+    public int commonRelicHealAmount { get; set; } = 1;
+    public int uncommonRelicHealAmount { get; set; } = 2;
+    public int rareRelicHealAmount { get; set; } = 5;
+    public int legendaryRelicHealAmount { get; set; } = 10;
 
-    public int minEnemies = 5;
-    public int bonusEnemies = 10;
-    public int enemyHealth = 5;
+    public int minEnemies { get; set; } = 5;
+    public int bonusEnemies { get; set; } = 10;
+    public int enemyHealth { get; set; } = 5;
 
     public float waveTime { get; set; } = 120.0f;
     public float currentWaveTime => m_CurrentWaveTime;
 
     //stats 
-    public int commonRelicsPickedUp = 0;
-    public int uncommonRelicsPickedUp = 0;
-    public int rareRelicsPickedUp = 0;
-    public int legendaryRelicsPickedUp = 0;
-    public int slimesKilled = 0;
-    public int shrubsKilled = 0;
-    public int potgoblinsKilled = 0;
-    public float timePlayed = 0.0f;
+    public int commonRelicsPickedUp { get; set; } = 0;
+    public int uncommonRelicsPickedUp { get; set; } = 0;
+    public int rareRelicsPickedUp { get; set; } = 0;
+    public int legendaryRelicsPickedUp { get; set; } = 0;
+    public int slimesKilled { get; set; } = 0;
+    public int shrubsKilled { get; set; } = 0;
+    public int potgoblinsKilled { get; set; } = 0;
+    public float timePlayed { get; set; } = 0.0f;
 
     private float m_CurrentWaveTime;
     private List<Enemy> m_Enemies = new List<Enemy>();
@@ -308,7 +308,7 @@ public class GameDirector : MonoBehaviour
         return null;
     }
 
-    public int humanMaxHealth = 100;
+    public int humanMaxHealth { get; set; } = 100;
 
     private void OnRelicPickup(Relic relic)
     {
