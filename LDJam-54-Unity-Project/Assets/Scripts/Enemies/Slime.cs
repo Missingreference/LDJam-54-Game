@@ -77,6 +77,10 @@ public class Slime : Enemy
         m_DamageTrigger.onDealDamage += DealDamage;
 
 
+        float rand = Random.Range(-8f, 8f);
+        moveSpeed += rand;
+        rand = Random.Range(-1f, 0.8f);
+        moveWaitTime += rand;
     }
 
     public override void TakeDamage(int damage)

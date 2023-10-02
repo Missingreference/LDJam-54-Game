@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
+    static protected AudioClip m_HurtSound;
+    static protected AudioSource m_AudioPlayer;
+
 
     public int health { get; private set; } = 100;
     public float moveSpeed { get; set; } = 50;
@@ -18,6 +21,11 @@ public class Actor : MonoBehaviour
 
     protected virtual void Awake()
     {
+        if(m_HurtSound == null)
+        {
+            m_HurtSound = Resources.Load<AudioClip>("Sounds/Hit_hurt 73");
+        }
+
         GameObject spriteObject = new GameObject("Sprite");
         spriteObject.transform.parent = transform;
         spriteRenderer = spriteObject.AddComponent<SpriteRenderer>();
@@ -54,6 +62,11 @@ public class Actor : MonoBehaviour
 
     public virtual void TakeDamage(int damage)
     {
+        if(this is Enemy)
+        {
+            m_AudioPlayer.PlayOneShot(m_HurtSound);
+        }
+
         if(health - damage <= 0)
         {
             health = 0;

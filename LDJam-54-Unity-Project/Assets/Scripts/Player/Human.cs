@@ -61,10 +61,20 @@ public class Human : Actor
 
     public RelicPickerUpper relicPickerUpper;
 
+    private AudioSource m_AudioSource;
+
     protected override void Awake()
     {
+        if(m_AudioPlayer == null)
+        {
+            GameObject ap = new GameObject("Audio Player");
+            m_AudioPlayer = ap.AddComponent<AudioSource>();
+        }
+        m_AudioSource = gameObject.AddComponent<AudioSource>();
+
         base.Awake();
 
+        m_AudioSource.pitch = 3f;
         //moveSpeed = 1.0f;
 
         gameObject.layer = 7; //Player Movement

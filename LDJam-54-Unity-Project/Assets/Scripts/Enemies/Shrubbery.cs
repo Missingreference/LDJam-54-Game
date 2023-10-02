@@ -31,6 +31,8 @@ public class Shrubbery : Enemy
     {
         base.Awake();
 
+
+
         if(m_MoveSprites == null)
         {
             m_MoveSprites = Resources.LoadAll<Sprite>("Sprites/Enemy/Shrubbery/Shrubbery_Move_Sheet");
@@ -71,6 +73,10 @@ public class Shrubbery : Enemy
         m_AdditionalDamageTrigger.isTrigger = true;
         m_AdditionalDamageTrigger.radius = 0.2f;
         m_AdditionalDamageTrigger.enabled = false;
+
+
+        float rand = Random.Range(-8f, 8f);
+        moveSpeed += rand;
     }
 
     protected override void Update()

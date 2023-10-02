@@ -17993,26 +17993,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de41b4340e8c2d41a05ef626f36e97c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  commonRelicWeight: 0.25
-  uncommonRelicWeight: 0.1
-  rareRelicWeight: 0.05
-  legendaryRelicWeight: 0.01
-  commonRelicHealAmount: 5
-  uncommonRelicHealAmount: 15
-  rareRelicHealAmount: 30
-  legendaryRelicHealAmount: 100
-  minEnemies: 5
-  bonusEnemies: 10
-  enemyHealth: 5
-  commonRelicsPickedUp: 0
-  uncommonRelicsPickedUp: 0
-  rareRelicsPickedUp: 0
-  legendaryRelicsPickedUp: 0
-  slimesKilled: 0
-  shrubsKilled: 0
-  potgoblinsKilled: 0
-  timePlayed: 0
-  humanMaxHealth: 100
 --- !u!4 &1684564933
 Transform:
   m_ObjectHideFlags: 0

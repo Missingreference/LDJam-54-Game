@@ -20,7 +20,7 @@ public class MusicSource : MonoBehaviour
     void Start()
     {
         // get audio source
-        audioSource = FindObjectOfType<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
         
         //get audio clips
         gameOverSong = Resources.Load<AudioClip>("Music/Game Over/Moonlit Forest Main Loop copy");

@@ -31,6 +31,9 @@ public class PotGoblin : Enemy
     {
         base.Awake();
 
+        float rand = Random.Range(0.2f, 0.8f);
+        attackTime += rand;
+
         moveSpeed = 0.0f;
 
         if(m_IdleSprites == null)
