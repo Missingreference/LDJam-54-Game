@@ -40,7 +40,7 @@ public class SlashAbility : AttackAbility
 
     protected override void InitiateAttack()
     {
-        m_Direction = Vector2ToDegrees(((Vector2)transform.position - target).normalized);
+        m_Direction = Vector2ToDegrees((target - (Vector2)transform.position).normalized);
 
         trigger.size = new Vector2(slashWidth, slashDistance);
         trigger.offset = new Vector2(0, trigger.size.y * 0.5f);

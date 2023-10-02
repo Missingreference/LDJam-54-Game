@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,9 +9,13 @@ public class HumanSlashTrigger : MonoBehaviour
 
     public float cooldownTime = 0.5f;
 
+    public Action onTrigger;
+
     private float m_CooldownTimer;
 
     private List<SlashAbility> m_AbilityPool = new List<SlashAbility>();
+    private List<Enemy> m_EnemiesInRange = new List<Enemy>();
+    private List<Action> m_RemoveFunctions = new List<Action>();
 
     void Awake()
     {
@@ -26,27 +31,78 @@ public class HumanSlashTrigger : MonoBehaviour
         {
             m_CooldownTimer -= Time.deltaTime;
         }
-    }
-
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(m_CooldownTimer > 0.0f) return;
-
-        Enemy enemy = GetEnemy(collision);
-        if(enemy != null && enemy.isAlive)
+        else if(m_EnemiesInRange.Count > 0)
         {
-            Trigger(enemy.transform.position);
+            Enemy targetEnemy = PickNearestEnemy();
+            Trigger(targetEnemy.transform.position);
         }
     }
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if(m_CooldownTimer > 0.0f) return;
 
-        Enemy enemy = GetEnemy(collision);
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        Enemy enemy = GetEnemy(other);
         if(enemy != null && enemy.isAlive)
         {
-            Trigger(enemy.transform.position);
+            Action a = () =>
+            {
+                OnEnemyDeath(enemy);
+            };
+            enemy.onDeath += a;
+
+            m_EnemiesInRange.Add(enemy);
+            m_RemoveFunctions.Add(a);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        Enemy enemy = GetEnemy(other);
+        if(enemy != null)
+        {
+            for(int i = 0; i < m_EnemiesInRange.Count; i++)
+            {
+                if(m_EnemiesInRange[i] == enemy)
+                {
+                    m_EnemiesInRange.RemoveAt(i);
+                    Action a = m_RemoveFunctions[i];
+                    enemy.onDeath -= a;
+                    m_RemoveFunctions.RemoveAt(i);
+
+                }
+            }
+        }
+    }
+
+    private Enemy PickNearestEnemy()
+    {
+        float smallestDistance = Vector2.Distance(m_EnemiesInRange[0].transform.position, transform.position);
+        int index = 0;
+        for(int i = 1; i < m_EnemiesInRange.Count; i++)
+        {
+            float distance = Vector2.Distance(m_EnemiesInRange[i].transform.position, transform.position);
+            if(distance < smallestDistance)
+            {
+                smallestDistance = distance;
+                index = i;
+            }
+        }
+
+        return m_EnemiesInRange[index];
+    }
+
+    private void OnEnemyDeath(Enemy enemy)
+    {
+        for(int i = 0; i < m_EnemiesInRange.Count; i++)
+        {
+            if(m_EnemiesInRange[i] == enemy)
+            {
+                m_EnemiesInRange.RemoveAt(i);
+                Action a = m_RemoveFunctions[i];
+                enemy.onDeath -= a;
+                m_RemoveFunctions.RemoveAt(i);
+
+            }
         }
     }
 
@@ -80,10 +136,10 @@ public class HumanSlashTrigger : MonoBehaviour
         {
             //Create new
             GameObject slashObject = new GameObject("Slash Ability");
+            slashObject.transform.parent = transform;
             slashObject.transform.localPosition = Vector3.zero;
             slashObject.transform.localEulerAngles = Vector3.zero;
             slashObject.transform.localScale = Vector3.one;
-            slashObject.transform.parent = transform;
 
             SlashAbility slashAbility = slashObject.AddComponent<SlashAbility>();
             slashAbility.onAttackComplete += () =>
@@ -101,6 +157,8 @@ public class HumanSlashTrigger : MonoBehaviour
             ability.gameObject.SetActive(true);
             ability.Attack(targetPosition);
         }
+        
+        onTrigger?.Invoke();
     }
 
     private void PoolAbility(SlashAbility ability)

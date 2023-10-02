@@ -98,10 +98,12 @@ public class HumanWeapon : MonoBehaviour
     private Vector2 GetTargetPosition()
     {
 
-        if(m_Attacking)
+        if(false)// if(m_Attacking)
         {
+            
             Vector2 direction;
             float distance = 0.5f;
+            /*
             if(m_Human.attackTriggers.Count > 0)
             {
                 DamageTrigger targetTrigger = m_Human.attackTriggers[m_Human.attackTriggers.Count - 1];
@@ -135,7 +137,7 @@ public class HumanWeapon : MonoBehaviour
                 transform.eulerAngles = new Vector3(0, 0, -45);
                 transform.eulerAngles = new Vector3(0, 0, Vector2ToDegrees(direction) - 45);
             }
-
+            */
             return (Vector2)m_Human.transform.position + (direction * distance);
         }
         else

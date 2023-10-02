@@ -40,7 +40,7 @@ public class GameDirector : MonoBehaviour
 
     void Update()
     {
-        if(m_CurrentWaveTime > 0.0f)
+        if(m_CurrentWaveTime > 0.0f && human.isAlive)
         {
             m_CurrentWaveTime -= Time.deltaTime;
             if(m_CurrentWaveTime <= 0)

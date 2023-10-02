@@ -41,9 +41,9 @@ public class HumanController : MonoBehaviour
 
         human.Move(moveDirection);
 
-        if(Input.GetMouseButtonDown(0))
+        //if(Input.GetMouseButtonDown(0))
         {
-            human.Attack();
+            //human.Attack();
         }
     }
 }

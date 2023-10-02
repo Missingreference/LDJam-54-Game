@@ -45,10 +45,10 @@ public class Human : Actor
     private float m_DamageFlashTimer = 0.0f;
     private float m_DamageFlashCount = 0;
 
-    public List<DamageTrigger> attackTriggers = new List<DamageTrigger>();
-    private List<DamageTrigger> m_PooledAttackTriggers = new List<DamageTrigger>();
-    private List<float> m_AttackSwipeTimers = new List<float>();
-    private List<float> m_AttackDirections = new List<float>();
+    //public List<DamageTrigger> attackTriggers = new List<DamageTrigger>();
+    //private List<DamageTrigger> m_PooledAttackTriggers = new List<DamageTrigger>();
+    //private List<float> m_AttackSwipeTimers = new List<float>();
+    //private List<float> m_AttackDirections = new List<float>();
 
     //Ability triggers
     public HumanSlashTrigger slashTrigger;
@@ -87,6 +87,7 @@ public class Human : Actor
         slashTriggerObject.transform.localEulerAngles = Vector3.zero;
         slashTriggerObject.transform.localScale = Vector3.one;
         slashTrigger = slashTriggerObject.AddComponent<HumanSlashTrigger>();
+        slashTrigger.onTrigger += 
     }
 
 
@@ -94,11 +95,6 @@ public class Human : Actor
     protected override void Update()
     {
         AnimateHover();
-
-        if(attackTriggers.Count > 0)
-        {
-            AnimateAttack();
-        }
 
         if(m_DamageFlashCount > 0)
         {
@@ -167,102 +163,11 @@ public class Human : Actor
         }
     }
 
-    private void AnimateAttack()
-    {
-        for(int i = 0; i < m_AttackSwipeTimers.Count; i++)
-        {
-            if(m_AttackSwipeTimers[i] >= 1.0f)
-            {
-                m_AttackSwipeTimers.RemoveAt(i);
-                DamageTrigger trigger = attackTriggers[i];
-                trigger.gameObject.SetActive(false);
-                attackTriggers.RemoveAt(i);
-                m_AttackDirections.RemoveAt(i);
-                m_PooledAttackTriggers.Add(trigger);
-                trigger.onDealDamage -= DealDamage;
-                i--;
-                continue;
-            }
-
-            float time = m_AttackSwipeTimers[i];
-            time += attackSwipeSpeed * Time.deltaTime;
-            if(time >= 1.0f) //Delay removal a frame
-            {
-                time = 1.0f;
-            }
-            m_AttackSwipeTimers[i] = time;
-            DamageTrigger damageTrigger = attackTriggers[i];
-
-            float direction = m_AttackDirections[i];
-
-            if(direction < 0)
-            {
-                float startAngle = direction + (attackSwipeRotation * 0.5f);
-                damageTrigger.gameObject.transform.localEulerAngles = new Vector3(0.0f, 0.0f, startAngle - (time * attackSwipeRotation));
-            }
-            else
-            {
-                float startAngle = direction - (attackSwipeRotation * 0.5f);
-                damageTrigger.gameObject.transform.localEulerAngles = new Vector3(0.0f, 0.0f, startAngle + (time * attackSwipeRotation));
-            }
-
-
-
-        }
-
-
-    }
-
     public override void TakeDamage(int damage)
     {
         base.TakeDamage(damage);
 
         m_DamageFlashCount = damageFlashCount;
-    }
-
-    public void Attack()
-    {
-        DamageTrigger damageTrigger;
-        BoxCollider2D trigger;
-        if(m_PooledAttackTriggers.Count > 0)
-        {   
-            damageTrigger = m_PooledAttackTriggers[m_PooledAttackTriggers.Count - 1];
-            damageTrigger.gameObject.SetActive(true);
-            trigger = (BoxCollider2D)damageTrigger.trigger;
-            damageTrigger.ClearDamagedActors();
-
-            m_PooledAttackTriggers.RemoveAt(m_PooledAttackTriggers.Count - 1);
-        }
-        else
-        {
-            GameObject damageTriggerObject = new GameObject("Damage Trigger");
-            damageTriggerObject.transform.parent = transform;
-            damageTriggerObject.transform.localPosition = Vector3.zero;
-            damageTriggerObject.transform.localEulerAngles = Vector3.zero;
-            damageTriggerObject.transform.localScale = Vector3.one;
-
-            damageTrigger = damageTriggerObject.AddComponent<DamageTrigger>();
-            trigger = damageTrigger.CreateTrigger<BoxCollider2D>();
-
-            damageTrigger.trigger.callbackLayers = 1 << 8;
-        }
-
-        attackTriggers.Add(damageTrigger);
-        m_AttackSwipeTimers.Add(0.0f);
-        if(facingDirection == FacingDirection.Left)
-        {
-            m_AttackDirections.Add(90.0f);
-        }
-        else
-        {
-            m_AttackDirections.Add(-90.0f);
-        }
-        trigger.size = new Vector2(attackSwipeWidth, attackSwipeDistance);
-        trigger.offset = new Vector2(0, trigger.size.y * 0.5f);
-
-        damageTrigger.onDealDamage += DealDamage;
-
-        onAttack?.Invoke();
     }
 
     protected override void OnMove()
