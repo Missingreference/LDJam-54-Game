@@ -20,15 +20,15 @@ public class GameDirector : MonoBehaviour
     public Action onPlayerDeath;
     public Action<Relic> onRelicPickup;
 
-    public float commonRelicWeight = 0.25f;
-    public float uncommonRelicWeight = 0.1f;
-    public float rareRelicWeight = 0.05f;
-    public float legendaryRelicWeight = 0.01f;
+    public float commonRelicWeight = 0.1f;
+    public float uncommonRelicWeight = 0.05f;
+    public float rareRelicWeight = 0.0175f;
+    public float legendaryRelicWeight = 0.005f;
 
-    public int commonRelicHealAmount = 5;
-    public int uncommonRelicHealAmount = 15;
-    public int rareRelicHealAmount = 30;
-    public int legendaryRelicHealAmount = 100;
+    public int commonRelicHealAmount = 1;
+    public int uncommonRelicHealAmount = 2;
+    public int rareRelicHealAmount = 5;
+    public int legendaryRelicHealAmount = 10;
 
     public int minEnemies = 5;
     public int bonusEnemies = 10;

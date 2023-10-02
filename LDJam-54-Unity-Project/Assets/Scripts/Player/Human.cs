@@ -64,8 +64,7 @@ public class Human : Actor
     protected override void Awake()
     {
         base.Awake();
-        Debug.Log(health);
-        SetHealth(1);
+
         //moveSpeed = 1.0f;
 
         gameObject.layer = 7; //Player Movement

@@ -18,7 +18,7 @@ public class RelicPickup : MonoBehaviour
     public BoxCollider2D trigger { get; private set; }
 
 
-    private float m_PickupDelay = 1.5f;
+    private float m_PickupDelay = 0.85f;
 
     private void Awake()
     {
