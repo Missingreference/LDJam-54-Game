@@ -30,8 +30,22 @@ public class GameDirector : MonoBehaviour
     public int rareRelicHealAmount = 30;
     public int legendaryRelicHealAmount = 100;
 
+    public int minEnemies = 5;
+    public int bonusEnemies = 10;
+    public int enemyHealth = 5;
+
     public float waveTime { get; set; } = 120.0f;
     public float currentWaveTime => m_CurrentWaveTime;
+
+    //stats 
+    public int commonRelicsPickedUp = 0;
+    public int uncommonRelicsPickedUp = 0;
+    public int rareRelicsPickedUp = 0;
+    public int legendaryRelicsPickedUp = 0;
+    public int slimesKilled = 0;
+    public int shrubsKilled = 0;
+    public int potgoblinsKilled = 0;
+    public float timePlayed = 0.0f;
 
     private float m_CurrentWaveTime;
     private List<Enemy> m_Enemies = new List<Enemy>();
@@ -49,28 +63,12 @@ public class GameDirector : MonoBehaviour
     {
         AdvanceWave();
 
-        GameObject relicObject = new GameObject("Relic Pickup");
-        relicObject.transform.position = new Vector3(10.0f, 10.0f);
-        RelicPickup relicPU = relicObject.AddComponent<RelicPickup>();
-        relicPU.SetRelic(new Relic(RelicRarity.Common));
-
-        relicObject = new GameObject("Relic Pickup");
-        relicObject.transform.position = new Vector3(12.0f, 10.0f);
-        relicPU = relicObject.AddComponent<RelicPickup>();
-        relicPU.SetRelic(new Relic(RelicRarity.Uncommon));
-        relicObject = new GameObject("Relic Pickup");
-        relicObject.transform.position = new Vector3(14.0f, 10.0f);
-        relicPU = relicObject.AddComponent<RelicPickup>();
-        relicPU.SetRelic(new Relic(RelicRarity.Rare));
-        relicObject = new GameObject("Relic Pickup");
-        relicObject.transform.position = new Vector3(16.0f, 10.0f);
-        relicPU = relicObject.AddComponent<RelicPickup>();
-        relicPU.SetRelic(new Relic(RelicRarity.Legendary));
-
     }
 
     void Update()
     {
+        timePlayed += Time.deltaTime;
+
         if(m_CurrentWaveTime > 0.0f && human.isAlive)
         {
             m_CurrentWaveTime -= Time.deltaTime;
@@ -80,17 +78,77 @@ public class GameDirector : MonoBehaviour
             }
             else
             {
-                if(m_Enemies.Count <= 5)
+                if(m_Enemies.Count <= minEnemies)
                 {
-                    for(int i = 0; i < 10; i++)
+                    for(int i = 0; i < bonusEnemies; i++)
                     {
-                        Slime slime = SpawnEnemy<Slime>();
-                        m_Enemies.Add(slime);
-                        slime.onDeath += () =>
+                        if(currentStage == 1)
                         {
-                            OnEnemyDeath(slime);
-                        };
-                        slime.SetHealth(5);
+
+                            Slime slime = SpawnEnemy<Slime>();
+                            m_Enemies.Add(slime);
+                            slime.onDeath += () =>
+                            {
+                                OnEnemyDeath(slime);
+                            };
+                            slime.SetHealth(enemyHealth);
+                        }
+                        else if(currentStage <= 3) 
+                        {
+                            int rand = Random.Range(0, 2);
+                            if(rand == 0)
+                            {
+                                Slime slime = SpawnEnemy<Slime>();
+                                m_Enemies.Add(slime);
+                                slime.onDeath += () =>
+                                {
+                                    OnEnemyDeath(slime);
+                                };
+                                slime.SetHealth(enemyHealth);
+                            }
+                            else
+                            {
+                                Shrubbery shrub = SpawnEnemy<Shrubbery>();
+                                shrub.onDeath += () =>
+                                {
+                                    OnEnemyDeath(shrub);
+                                };
+                                shrub.SetHealth(enemyHealth);
+                            }
+
+                        }
+                        else
+                        {
+                            int rand = Random.Range(0, 3);
+                            if(rand == 0)
+                            {
+                                Slime slime = SpawnEnemy<Slime>();
+                                m_Enemies.Add(slime);
+                                slime.onDeath += () =>
+                                {
+                                    OnEnemyDeath(slime);
+                                };
+                                slime.SetHealth(enemyHealth);
+                            }
+                            else if(rand == 1)
+                            {
+                                PotGoblin gob = SpawnEnemy<PotGoblin>();
+                                gob.onDeath += () =>
+                                {
+                                    OnEnemyDeath(gob);
+                                };
+                                gob.SetHealth(enemyHealth);
+                            }
+                            else
+                            {
+                                Shrubbery shrub = SpawnEnemy<Shrubbery>();
+                                shrub.onDeath += () =>
+                                {
+                                    OnEnemyDeath(shrub);
+                                };
+                                shrub.SetHealth(enemyHealth);
+                            }
+                        }
                     }
                 }
             }
@@ -114,6 +172,13 @@ public class GameDirector : MonoBehaviour
     public void AdvanceWave()
     {
         currentStage++;
+
+        bonusEnemies += 5;
+
+        minEnemies += 2;
+
+        enemyHealth = ((currentStage / 2) + 1) * 5;
+
         m_CurrentWaveTime = waveTime;
 
         if(currentStage > 2)
@@ -122,7 +187,7 @@ public class GameDirector : MonoBehaviour
             {
                 if(abilitiesLeft.Count > 0)
                 {
-                    int ab = Random.Range(0, 4);
+                    int ab = Random.Range(0, abilitiesLeft.Count);
 
                     int chosenAbility = abilitiesLeft[ab];
                     abilitiesLeft.RemoveAt(ab);
@@ -207,6 +272,19 @@ public class GameDirector : MonoBehaviour
             RelicPickup relicPU = relicObject.AddComponent<RelicPickup>();
             relicPU.SetRelic(relic);
         }
+
+        if(enemy is Slime)
+        {
+            slimesKilled++;
+        }
+        else if(enemy is Shrubbery)
+        {
+            shrubsKilled++;
+        }
+        else if(enemy is PotGoblin)
+        {
+            potgoblinsKilled++;
+        }
     }
 
     private Relic RollForRelic()
@@ -230,7 +308,7 @@ public class GameDirector : MonoBehaviour
         return null;
     }
 
-    private int m_HumanMaxHealth = 100;
+    public int humanMaxHealth = 100;
 
     private void OnRelicPickup(Relic relic)
     {
@@ -239,23 +317,27 @@ public class GameDirector : MonoBehaviour
         {
             case RelicRarity.Common:
                 newHealth += commonRelicHealAmount;
+                commonRelicsPickedUp++;
                 break;
             case RelicRarity.Uncommon:
                 newHealth += uncommonRelicHealAmount;
+                uncommonRelicsPickedUp++;
                 break;
             case RelicRarity.Rare:
                 newHealth += rareRelicHealAmount;
+                rareRelicsPickedUp++;
                 break;
             case RelicRarity.Legendary:
                 newHealth += legendaryRelicHealAmount;
+                legendaryRelicsPickedUp++;
                 break;
             default:
                 break;
         }
 
-        if(newHealth > m_HumanMaxHealth)
+        if(newHealth > humanMaxHealth)
         {
-            newHealth = m_HumanMaxHealth;
+            newHealth = humanMaxHealth;
         }
 
         human.SetHealth(newHealth);

@@ -17,6 +17,9 @@ public class HUD : MonoBehaviour
     private TextMeshProUGUI m_WaveText;
     private float m_NewWaveDiplayTimer = 0.0f;
 
+    private Image m_HealthBar;
+    private TextMeshProUGUI m_HealthText;
+
     private TextMeshProUGUI m_WaveTimer;
 
     private void Awake()
@@ -29,6 +32,9 @@ public class HUD : MonoBehaviour
 
         m_WaveTimer = transform.Find("Time Elapsed").GetComponent<TextMeshProUGUI>();
         m_WaveText = transform.Find("Wave Text").GetComponent<TextMeshProUGUI>();
+
+        m_HealthBar = transform.Find("Health Unfilled").Find("Health").GetComponent<Image>();
+        m_HealthText = transform.Find("Hitpoints").GetComponent<TextMeshProUGUI>();
     }
 
     // Start is called before the first frame update
@@ -62,6 +68,10 @@ public class HUD : MonoBehaviour
         }
 
 
+        m_HealthText.text = "HP: " + m_GameDirector.human.health.ToString() + "/" + m_GameDirector.humanMaxHealth.ToString();
+
+        float perc = (float)m_GameDirector.human.health / (float)m_GameDirector.humanMaxHealth;
+        m_HealthBar.rectTransform.sizeDelta = new Vector2(700.0f * perc, m_HealthBar.rectTransform.sizeDelta.y);
 
     }
 

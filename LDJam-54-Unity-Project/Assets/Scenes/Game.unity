@@ -4817,7 +4817,6 @@ RectTransform:
   m_Children:
   - {fileID: 1951366554}
   - {fileID: 2050242704}
-  - {fileID: 1590958595}
   - {fileID: 197206363}
   - {fileID: 715636528}
   - {fileID: 511136976}
@@ -17650,13 +17649,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 972113317}
+  m_Father: {fileID: 2050242704}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -550}
+  m_AnchoredPosition: {x: -350.0001, y: -12.499954}
   m_SizeDelta: {x: 700, y: 25}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1590958596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18002,6 +18001,18 @@ MonoBehaviour:
   uncommonRelicHealAmount: 15
   rareRelicHealAmount: 30
   legendaryRelicHealAmount: 100
+  minEnemies: 5
+  bonusEnemies: 10
+  enemyHealth: 5
+  commonRelicsPickedUp: 0
+  uncommonRelicsPickedUp: 0
+  rareRelicsPickedUp: 0
+  legendaryRelicsPickedUp: 0
+  slimesKilled: 0
+  shrubsKilled: 0
+  potgoblinsKilled: 0
+  timePlayed: 0
+  humanMaxHealth: 100
 --- !u!4 &1684564933
 Transform:
   m_ObjectHideFlags: 0
@@ -19675,7 +19686,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1590958595}
   m_Father: {fileID: 972113317}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
