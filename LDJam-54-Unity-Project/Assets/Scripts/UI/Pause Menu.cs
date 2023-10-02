@@ -18,6 +18,7 @@ public class PauseMenu : MonoBehaviour
     Image backGroundImage;
     bool resumeFunctionTrue;
     Color32 newColor = new Color32(63, 63, 63, 200);
+    Slider pauseMenuVolumeSlider;
     
 
 
@@ -45,7 +46,14 @@ public class PauseMenu : MonoBehaviour
         //get transform of resume button
         resumeButton = transform.Find("Background").Find("Pause Menu").Find("Resume Button").GetComponent<Button>();
 
-       
+        //get transform of pause menu volume slider
+        pauseMenuVolumeSlider = transform.Find("Background").Find("Pause Menu").Find("Volume Slider").GetComponent<Slider>();
+
+        //set slider position to be in sync with volume float at beginning
+        pauseMenuVolumeSlider.value = MusicSource.volume;
+        //when volume slider is used, do function
+        pauseMenuVolumeSlider.onValueChanged.AddListener(ChangeVolume);
+        
 
         //when resume button is clicked, do OnResumeButtonClick function
         resumeButton.onClick.AddListener(OnResumeButtonClick);
@@ -72,7 +80,12 @@ public class PauseMenu : MonoBehaviour
     }
 
     
-    
+    void ChangeVolume(float value)
+    {
+        AudioListener.volume = pauseMenuVolumeSlider.value;
+        MusicSource.volume = value;
+
+    }
 
     // Update is called once per frame
     void Update()

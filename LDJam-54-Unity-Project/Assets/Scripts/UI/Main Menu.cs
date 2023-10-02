@@ -14,6 +14,10 @@ public class MainMenu : MonoBehaviour
     float animateTime = 0.5f;
     float animateTimer;
     Image blackFadeOut;
+    Slider mainMenuVolumeSlider;
+    
+
+    
    
   
 
@@ -34,7 +38,10 @@ public class MainMenu : MonoBehaviour
         //Get fading image transform
         blackFadeOut = transform.Find("Black Fade Out").GetComponent<Image>();
 
-        
+
+
+        //Get transform of main menu volume slider
+        mainMenuVolumeSlider = transform.Find("Volume Slider").GetComponent<Slider>();
 
 
 
@@ -47,6 +54,13 @@ public class MainMenu : MonoBehaviour
 
 
 
+        //when volume slider is used, do function
+        mainMenuVolumeSlider.onValueChanged.AddListener(ChangeVolume);
+
+
+
+        //set volume at beginning to 0.5
+        mainMenuVolumeSlider.value = MusicSource.volume;
 
         //set intital fadig image color to black
         blackFadeOut.color = Color.black;
@@ -70,6 +84,14 @@ public class MainMenu : MonoBehaviour
         
     }
 
+    public void ChangeVolume(float value)
+    {
+
+        AudioListener.volume = mainMenuVolumeSlider.value;
+        MusicSource.volume = value;
+
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -88,5 +110,6 @@ public class MainMenu : MonoBehaviour
             blackFadeOut.gameObject.SetActive(false);
         }
 
+        
     }
 }
