@@ -13,10 +13,15 @@ public class GameOver : MonoBehaviour
     CanvasGroup gameOverCanvasGroup;
     Color32 newColor = new Color32(63, 63, 63, 255);
     HUD hUD;
+    MusicSource musicSource; 
 
     // Start is called before the first frame update
     void Start()
     {
+        musicSource = FindObjectOfType<MusicSource>();
+
+        musicSource.PlayGameOverMusic();
+
         // get game over background image
         gameOverBackgroundImage = transform.Find("Game Over Background").GetComponent<Image>();
 
@@ -53,6 +58,7 @@ public class GameOver : MonoBehaviour
             if(animateTimer <= 0)
             {
                 hUD.gameObject.SetActive(false);
+
             }
         }
         
