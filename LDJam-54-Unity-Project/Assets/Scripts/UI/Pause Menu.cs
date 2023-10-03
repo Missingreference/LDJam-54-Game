@@ -10,9 +10,9 @@ public class PauseMenu : MonoBehaviour
 
     
     Button resumeButton;
-    const float startPosition = 425f;
+    const float startPosition = 1000f;
     const float endPosition = 0f;
-    const float animateDownTime = 1.0f;
+    const float animateDownTime = 0.4f;
     float animateDownTimer;
     RectTransform rectTransform;
     Image backGroundImage;
