@@ -57,6 +57,8 @@ public class GameDirector : MonoBehaviour
         human = FindObjectOfType<Human>();
         human.onDeath += OnPlayerDeath;
         human.relicPickerUpper.onRelicPickup += OnRelicPickup;
+
+        isPaused = false;
     }
 
     public void Start()

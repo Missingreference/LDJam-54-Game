@@ -81,6 +81,11 @@ public class PauseMenu : MonoBehaviour
         hiding = false;
     }
 
+    private void OnDisable()
+    {
+        hiding = false;
+    }
+
     private void OnGamePause()
     {
         gameObject.SetActive(true);

@@ -48,6 +48,8 @@ public class FadeOut : MonoBehaviour
 
     void OnPauseMenuQuitButtonClick()
     {
+        if(pauseMenu.hiding) return;
+
         fadeOutBlackImage.gameObject.SetActive(true);
         quitButtonClickTrue = true;
         fadeTime = 2f;
