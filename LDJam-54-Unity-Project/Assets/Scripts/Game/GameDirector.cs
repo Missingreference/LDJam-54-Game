@@ -169,7 +169,7 @@ public class GameDirector : MonoBehaviour
 #endif
     }
 
-    List<int> abilitiesLeft = new List<int>() { 0, 1, 2, 4 };
+    List<int> abilitiesLeft = new List<int>() { 0, 1, 2, 3 };
 
     public void AdvanceWave()
     {
