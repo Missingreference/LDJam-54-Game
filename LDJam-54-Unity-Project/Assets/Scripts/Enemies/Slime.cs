@@ -88,24 +88,33 @@ public class Slime : Enemy
         base.TakeDamage(damage);
     }
 
+    private int m_CurrentFrame = -1;
+
     protected override void Update()
     {
-        if(!isAlive) return;
+        //TODO Movement / physics based code should be added to another script
+        //if(!isAlive) return;
 
         base.Update();
 
         m_MoveWaitTimer += Time.deltaTime;
-
         m_AnimationTimer += Time.deltaTime;
 
         const float prepareTime = 1.5f;
 
         if((m_IsIdling && m_MoveWaitTimer <= prepareTime) || m_Enemy == null | !m_Enemy.isAlive)
         {
-            m_AnimationTimer %= idleAnimationTime;
+            if(m_AnimationTimer >= idleAnimationTime)
+            {
+                m_AnimationTimer %= idleAnimationTime;
+            }
             int frame = (int)((m_AnimationTimer / idleAnimationTime) * m_IdleSprites.Length);
 
-            spriteRenderer.sprite = m_IdleSprites[frame];
+            if(m_CurrentFrame != frame)
+            {
+                spriteRenderer.sprite = m_IdleSprites[frame];
+                m_CurrentFrame = frame;
+            }
         }
         else
         {
@@ -114,6 +123,7 @@ public class Slime : Enemy
                 m_AnimationTimer = 0.0f;
                 m_IsIdling = true;
                 spriteRenderer.sprite = m_IdleSprites[0];
+                m_CurrentFrame = -1;
             }
             else
             {
@@ -136,26 +146,22 @@ public class Slime : Enemy
                     frame = (int)(percent * m_MoveSprites.Length);
                 }
 
-
-                /*
-                if(m_IsIdling && frame > 4)
-                {
-                    frame = 4;
-                }
-                */
-
                 if(frame > m_MoveSprites.Length-1)
                 {
                     frame = m_MoveSprites.Length-1;
                 }
 
-                if(m_AttackingLeft)
+                if(m_CurrentFrame != frame)
                 {
-                    spriteRenderer.sprite = m_ReverseMoveSprites[frame];
-                }
-                else
-                {
-                    spriteRenderer.sprite = m_MoveSprites[frame];
+                    m_CurrentFrame = frame;
+                    if(m_AttackingLeft)
+                    {
+                        spriteRenderer.sprite = m_ReverseMoveSprites[frame];
+                    }
+                    else
+                    {
+                        spriteRenderer.sprite = m_MoveSprites[frame];
+                    }
                 }
             }
         }
@@ -192,6 +198,7 @@ public class Slime : Enemy
             rigidbody.AddForce(moveDirection * moveSpeed, ForceMode2D.Impulse);
 
             m_IsIdling = false;
+            m_CurrentFrame = -1;
             m_AnimationTimer = (5.0f / (float)m_MoveSprites.Length);
             if(moveDirection.x < 0.0f)
             {

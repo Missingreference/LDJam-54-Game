@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
+using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 public class PotGoblin : Enemy
 {
@@ -61,9 +64,12 @@ public class PotGoblin : Enemy
 
     }
 
+    private int m_CurrentFrame = -1;
+
     protected override void Update()
     {
-        if(!isAlive) return;
+        //TODO Movement / physics based code should be added to another script
+        //if(!isAlive) return;
 
         base.Update();
 
@@ -84,8 +90,11 @@ public class PotGoblin : Enemy
             }
 
             int frame = Mathf.FloorToInt((m_AnimationTimer / idleAnimationTime) * (m_IdleSprites.Length));
-
-            spriteRenderer.sprite = m_IdleSprites[frame];
+            if(frame != m_CurrentFrame)
+            {
+                m_CurrentFrame = frame;
+                spriteRenderer.sprite = m_IdleSprites[frame];
+            }
         }
         else
         {
@@ -93,17 +102,23 @@ public class PotGoblin : Enemy
             {
                 m_AnimationTimer = 0.0f;
                 m_IsIdling = true;
+                //Force frame switch
+                m_CurrentFrame = -1;
             }
 
             int frame = (int)((m_AnimationTimer / attackAnimationTime) * (m_AttackSprites.Length - 1));
 
-            if(m_CurrentAttackFrame < 3 && frame >= 3)
+                if(m_CurrentAttackFrame < 3 && frame >= 3)
+                {
+                    ThrowProjectile();
+                }
+                m_CurrentAttackFrame = frame;
+
+            if(frame != m_CurrentFrame)
             {
-                ThrowProjectile();
+                spriteRenderer.sprite = m_AttackSprites[frame];
             }
 
-            spriteRenderer.sprite = m_AttackSprites[frame];
-            m_CurrentAttackFrame = frame;
         }
     }
 
@@ -141,31 +156,59 @@ public class PotGoblin : Enemy
         m_AnimationTimer = 0.0f;
     }
 
+    static List<PotGoblinProjectile> m_ProjectilePool = new List<PotGoblinProjectile>();
     private void ThrowProjectile()
     {
-        GameObject projectileObject = new GameObject("Pot Goblin Projectile");
-        projectileObject.transform.position = transform.position;
+        PotGoblinProjectile projectile;
+        if(m_ProjectilePool.Count == 0)
+        {
+            //Create
+            GameObject projectileObject = new GameObject("Pot Goblin Projectile");
+            projectileObject.SetActive(false); //This ensures that PotGoblinProjectile.OnEnable is called after PotGoblinProjectile.direction is set
+            projectile = projectileObject.AddComponent<PotGoblinProjectile>();
+        }
+        else
+        {
+            int lastIndex = m_ProjectilePool.Count - 1;
+            projectile = m_ProjectilePool[lastIndex];
+            m_ProjectilePool.RemoveAt(lastIndex);
 
-        PotGoblinProjectile projectile = projectileObject.AddComponent<PotGoblinProjectile>();
+            SceneManager.MoveGameObjectToScene(projectile.gameObject, SceneManager.GetActiveScene());
+        }
+
+        projectile.transform.position = transform.position;
         projectile.direction = m_CurrentThrowDirection;
+        projectile.gameObject.SetActive(true);
+        projectile.onHit += OnProjectileHit;
+    }
+
+    //Called when hitting an actor or hitting a wall
+    private void OnProjectileHit(PotGoblinProjectile projectile)
+    {
+        DontDestroyOnLoad(projectile.gameObject);
+        projectile.gameObject.SetActive(false);
+        m_ProjectilePool.Add(projectile);
+        projectile.onHit -= OnProjectileHit;
 
     }
 
     public class PotGoblinProjectile : MonoBehaviour
     {
+
         public SpriteRenderer spriteRenderer;
         public CircleCollider2D trigger;
         public DamageTrigger damageTrigger;
+        public new Rigidbody2D rigidbody;
         public float speed = 5.0f;
         public Vector2 direction = Vector2.zero;
         public float rotateSpeed = 1000.0f;
 
         public int damage = 5;
 
+        public Action<PotGoblinProjectile> onHit;
 
         private void Awake()
         {
-
             gameObject.layer = 10;
 
             damageTrigger = gameObject.AddComponent<DamageTrigger>();
@@ -174,9 +217,22 @@ public class PotGoblin : Enemy
             trigger = damageTrigger.CreateTrigger<CircleCollider2D>();
 
             damageTrigger.onDealDamage += DealDamage;
-            trigger.callbackLayers = 1 << 6;
+            trigger.callbackLayers = (1 << 6) | 1;
+
+            rigidbody = gameObject.AddComponent<Rigidbody2D>();
+
+            rigidbody.gravityScale = 0.0f;
+            rigidbody.drag = 0.0f;
+            rigidbody.angularDrag = 0.0f;
         }
 
+        private void OnEnable()
+        {
+            rigidbody.velocity = direction * speed;
+            rigidbody.angularVelocity = rotateSpeed;
+        }
+
+        /*
         void FixedUpdate()
         {
             transform.position += (Vector3)direction * speed * Time.fixedDeltaTime;
@@ -188,6 +244,12 @@ public class PotGoblin : Enemy
             {
                 transform.localEulerAngles -= new Vector3(0.0f, 0.0f, rotateSpeed * Time.fixedDeltaTime);
             }
+        }
+        */
+
+        void OnTriggerEnter2D(Collider2D collision)
+        {
+            onHit?.Invoke(this);
         }
 
         private void DealDamage(Actor actor)

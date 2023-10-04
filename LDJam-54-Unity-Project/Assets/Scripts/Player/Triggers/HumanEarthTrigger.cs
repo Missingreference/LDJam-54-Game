@@ -96,13 +96,13 @@ public class HumanEarthTrigger : MonoBehaviour
     {
         for(int i = 0; i < m_EnemiesInRange.Count; i++)
         {
-            if(m_EnemiesInRange[i] == enemy)
+            if(ReferenceEquals(m_EnemiesInRange[i], enemy))
             {
                 m_EnemiesInRange.RemoveAt(i);
                 Action a = m_RemoveFunctions[i];
                 enemy.onDeath -= a;
                 m_RemoveFunctions.RemoveAt(i);
-
+                break;
             }
         }
     }

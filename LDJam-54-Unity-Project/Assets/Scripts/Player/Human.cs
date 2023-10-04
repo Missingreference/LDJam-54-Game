@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Elanetic.Tools;
 using Unity.VisualScripting;
+using UnityEngine.Audio;
 
 public class Human : Actor
 {
@@ -65,14 +66,27 @@ public class Human : Actor
 
     protected override void Awake()
     {
-        if(m_AudioPlayer == null)
+        base.Awake();
+
+        if(m_AudioSources == null)
         {
+            int audioSourceCount = 10;
+            m_AudioSources = new AudioSource[audioSourceCount];
             GameObject ap = new GameObject("Audio Player");
-            m_AudioPlayer = ap.AddComponent<AudioSource>();
+            AudioMixer mixer = Resources.Load<AudioMixer>("Audio Mixer");
+            for(int i = 0; i < audioSourceCount; i++)
+            {
+                AudioSource source = ap.AddComponent<AudioSource>();
+                source.outputAudioMixerGroup = mixer.FindMatchingGroups("Master")[0];
+                m_AudioSources[i] = source;
+
+                source.clip = m_HurtSound;
+                source.minDistance = 50.0f;
+            }
         }
         m_AudioSource = gameObject.AddComponent<AudioSource>();
-
-        base.Awake();
+        m_AudioSource.minDistance = 50.0f;
+        m_AudioSource.clip = m_HurtSound;
 
         m_AudioSource.pitch = 3f;
         //moveSpeed = 1.0f;
@@ -88,6 +102,7 @@ public class Human : Actor
         bodyTrigger.isTrigger = true;
         bodyTrigger.offset = new Vector2(0.0f, 0.35f);
         bodyTrigger.size = (spriteRenderer.bounds.extents * 2.0f) * 0.85f;
+        bodyTrigger.callbackLayers = (1 << 12);
 
         relicPickerUpper = bodyTrigger.AddComponent<RelicPickerUpper>();
         
@@ -156,6 +171,11 @@ public class Human : Actor
     }
 
 
+    private void OnDestroy()
+    {
+        m_AudioSources = null;
+    }
+
 
     protected override void Update()
     {
@@ -167,6 +187,7 @@ public class Human : Actor
         }
     }
 
+    private int m_CurrentFrame = -1;
     private void AnimateHover()
     {
         m_HoverTimer += spriteHoverSpeed * Time.deltaTime;
@@ -192,7 +213,13 @@ public class Human : Actor
 
         //Choose Sprite
         percent = m_HoverTimer;
-        spriteRenderer.sprite = m_IdleSpriteSheet[(int)(m_IdleSpriteSheet.Length * percent)];
+
+        int frame = (int)(m_IdleSpriteSheet.Length * percent);
+        if(frame != m_CurrentFrame)
+        {
+            m_CurrentFrame = frame;
+            spriteRenderer.sprite = m_IdleSpriteSheet[frame];
+        }
     }
 
     private void AnimateDamageFlash()
@@ -233,10 +260,14 @@ public class Human : Actor
         base.TakeDamage(damage);
 
         m_DamageFlashCount = damageFlashCount;
+
+        m_AudioSource.PlayOneShot(m_HurtSound);
     }
 
     protected override void OnMove()
     {
+        if(!isAlive) return;
+
         rigidbody.AddForce(moveDirection * moveSpeed, ForceMode2D.Force);
 
         if(moveDirection.x < 0)

@@ -1,12 +1,33 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Actor : MonoBehaviour
 {
     static protected AudioClip m_HurtSound;
-    static protected AudioSource m_AudioPlayer;
+    static protected AudioSource[] m_AudioSources;
+    static protected int m_LastPlaceAudio = 0;
+    static protected void PlayHitSound()
+    {
+        if(m_AudioSources == null) return;
+
+        AudioSource source = m_AudioSources[m_LastPlaceAudio];
+        if(source.isPlaying)
+        {
+            source.Stop();
+        }
+        //Randomize pitch
+        source.pitch = Random.Range(0.8f, 1.5f);
+        source.Play();
+        m_LastPlaceAudio++;
+        if(m_LastPlaceAudio >= m_AudioSources.Length)
+        {
+            m_LastPlaceAudio = 0;
+        }
+    }
 
 
     public int health { get; private set; } = 100;
@@ -62,11 +83,6 @@ public class Actor : MonoBehaviour
 
     public virtual void TakeDamage(int damage)
     {
-        if(this is Enemy)
-        {
-            m_AudioPlayer.PlayOneShot(m_HurtSound);
-        }
-
         if(health - damage <= 0)
         {
             health = 0;
@@ -79,6 +95,7 @@ public class Actor : MonoBehaviour
     public void Die()
     {
         isAlive = false;
+        moveDirection = Vector2.zero;
         OnDeath();
         onDeath?.Invoke();
     }
@@ -95,8 +112,8 @@ public class Actor : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-
-        if(isAlive && moveDirection.magnitude > 0)
+        //TODO
+        if(moveDirection.magnitude > 0)//isAlive && moveDirection.magnitude > 0)
         {
             OnMove();
         }

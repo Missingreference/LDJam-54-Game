@@ -36,6 +36,7 @@ public abstract class Enemy : Actor
 
     public override void TakeDamage(int damage)
     {
+        PlayHitSound();
         base.TakeDamage(damage);
 
         if(m_DamageFlashCount > 0)

@@ -49,6 +49,7 @@ public class GameDirector : MonoBehaviour
 
     private float m_CurrentWaveTime;
     private List<Enemy> m_Enemies = new List<Enemy>();
+    private List<Action> m_DeathListeners = new List<Action>();
     public Human human { get; private set; }
 
     void Awake()
@@ -88,11 +89,6 @@ public class GameDirector : MonoBehaviour
                         {
 
                             Slime slime = SpawnEnemy<Slime>();
-                            m_Enemies.Add(slime);
-                            slime.onDeath += () =>
-                            {
-                                OnEnemyDeath(slime);
-                            };
                             slime.SetHealth(enemyHealth);
                         }
                         else if(currentStage <= 3) 
@@ -101,20 +97,11 @@ public class GameDirector : MonoBehaviour
                             if(rand == 0)
                             {
                                 Slime slime = SpawnEnemy<Slime>();
-                                m_Enemies.Add(slime);
-                                slime.onDeath += () =>
-                                {
-                                    OnEnemyDeath(slime);
-                                };
                                 slime.SetHealth(enemyHealth);
                             }
                             else
                             {
                                 Shrubbery shrub = SpawnEnemy<Shrubbery>();
-                                shrub.onDeath += () =>
-                                {
-                                    OnEnemyDeath(shrub);
-                                };
                                 shrub.SetHealth(enemyHealth);
                             }
 
@@ -125,29 +112,16 @@ public class GameDirector : MonoBehaviour
                             if(rand == 0)
                             {
                                 Slime slime = SpawnEnemy<Slime>();
-                                m_Enemies.Add(slime);
-                                slime.onDeath += () =>
-                                {
-                                    OnEnemyDeath(slime);
-                                };
                                 slime.SetHealth(enemyHealth);
                             }
                             else if(rand == 1)
                             {
                                 PotGoblin gob = SpawnEnemy<PotGoblin>();
-                                gob.onDeath += () =>
-                                {
-                                    OnEnemyDeath(gob);
-                                };
                                 gob.SetHealth(enemyHealth);
                             }
                             else
                             {
                                 Shrubbery shrub = SpawnEnemy<Shrubbery>();
-                                shrub.onDeath += () =>
-                                {
-                                    OnEnemyDeath(shrub);
-                                };
                                 shrub.SetHealth(enemyHealth);
                             }
                         }
@@ -221,11 +195,6 @@ public class GameDirector : MonoBehaviour
         for(int i = 0; i < 10; i++)
         {
             Slime slime = SpawnEnemy<Slime>();
-            m_Enemies.Add(slime);
-            slime.onDeath += () =>
-            {
-                OnEnemyDeath(slime);
-            };
             slime.SetHealth(5);
         }
     }
@@ -236,11 +205,12 @@ public class GameDirector : MonoBehaviour
 
         for(int i = 0; i < m_Enemies.Count; i++)
         {
-            m_Enemies[i].onDeath = null;
+            m_Enemies[i].onDeath -= m_DeathListeners[i];
             m_Enemies[i].Die();
         }
 
         m_Enemies.Clear();
+        m_DeathListeners.Clear();
 
         /*
         RewardScreen rewardsScreen = FindObjectOfType<RewardScreen>(true);
@@ -264,8 +234,19 @@ public class GameDirector : MonoBehaviour
 
     private void OnEnemyDeath(Enemy enemy)
     {
+        //WARNING enemy parameter will be null due to Unity null overrid
+
         //Player killed enemy
-        m_Enemies.Remove(enemy);
+        for(int i = 0; i < m_Enemies.Count; i++)
+        {
+            if(ReferenceEquals(m_Enemies[i], enemy))
+            {
+                m_Enemies.RemoveAt(i);
+                m_DeathListeners.RemoveAt(i);
+                break;
+            }
+        }
+
         Relic relic = RollForRelic();
         if (relic != null)
         {
@@ -363,13 +344,13 @@ public class GameDirector : MonoBehaviour
         cameraRect.center = m_PlayerCamera.transform.position;
 
 
-        float spawnSize = 0.75f;
+        float spawnSize = 0.05f;
         Rect spawnLocation = new Rect();
         spawnLocation.size = new Vector2(spawnSize, spawnSize);
 
-        float spawnDistance = 5.0f;
+        Vector2 spawnDistance = new Vector2(12, 6);
 
-        spawnLocation.center = new Vector2(Random.Range(-spawnDistance, spawnDistance), Random.Range(-spawnDistance, spawnDistance));
+        spawnLocation.center = new Vector2(Random.Range(-spawnDistance.x, spawnDistance.x), Random.Range(-spawnDistance.y, spawnDistance.y));
 
         int breakoutSafety = 20;
 
@@ -378,7 +359,7 @@ public class GameDirector : MonoBehaviour
 
             if(breakoutSafety == 0)
             {
-                spawnLocation.center = new Vector2(Random.Range(-spawnDistance, spawnDistance), Random.Range(-spawnDistance, spawnDistance));
+                spawnLocation.center = new Vector2(Random.Range(-spawnDistance.x, spawnDistance.x), Random.Range(-spawnDistance.y, spawnDistance.y));
                 int nestBreakoutSafety = 20;
                 while(!IsEnoughSpaceToSpawn(spawnLocation.center))
                 {
@@ -387,13 +368,13 @@ public class GameDirector : MonoBehaviour
                         Debug.LogError("Unable to find spawn location.");
                         return Vector2.zero;
                     }
-                    spawnLocation.center = new Vector2(Random.Range(-spawnDistance, spawnDistance), Random.Range(-spawnDistance, spawnDistance));
+                    spawnLocation.center = new Vector2(Random.Range(-spawnDistance.x, spawnDistance.x), Random.Range(-spawnDistance.y, spawnDistance.y));
                     nestBreakoutSafety--;
                 }
                 break;
             }
 
-            spawnLocation.center = new Vector2(Random.Range(-spawnDistance, spawnDistance), Random.Range(-spawnDistance, spawnDistance));
+            spawnLocation.center = new Vector2(Random.Range(-spawnDistance.x, spawnDistance.x), Random.Range(-spawnDistance.y, spawnDistance.y));
 
             breakoutSafety--;
         }
@@ -413,6 +394,15 @@ public class GameDirector : MonoBehaviour
 
         T enemy = enemyObject.AddComponent<T>();
 
+        Action a = () =>
+        {
+            OnEnemyDeath(enemy);
+        };
+        enemy.onDeath += a;
+        m_DeathListeners.Add(a);
+
+        m_Enemies.Add(enemy);
+
         return enemy;
 
     }
@@ -421,11 +411,15 @@ public class GameDirector : MonoBehaviour
 
     private bool IsEnoughSpaceToSpawn(Vector2 position)
     {
-        int overlapCount = Physics2D.OverlapBoxNonAlloc(position, new Vector2(0.8f, 0.8f), 0.0f, overlapResults);
+        int layerMask = 1 | (1 << 11) | (1 << 6);
+
+        if(Vector2.Distance(position, human.transform.position) < 3.5f) return false;
+
+        int overlapCount = Physics2D.OverlapBoxNonAlloc(position, new Vector2(0.8f, 0.8f), 0.0f, overlapResults, layerMask);
         while(overlapCount == overlapResults.Length)
         {
             overlapResults = new Collider2D[overlapResults.Length * 2];
-            overlapCount = Physics2D.OverlapBoxNonAlloc(position, new Vector2(0.8f, 0.8f), 0.0f, overlapResults);
+            overlapCount = Physics2D.OverlapBoxNonAlloc(position, new Vector2(0.8f, 0.8f), 0.0f, overlapResults, layerMask);
         }
 
         for(int i = 0; i < overlapCount; i++)

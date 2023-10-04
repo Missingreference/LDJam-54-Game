@@ -75,13 +75,27 @@ public class Shrubbery : Enemy
         m_AdditionalDamageTrigger.enabled = false;
 
 
+    }
+
+    private void OnEnable()
+    {
+        m_IsIdling = true;
+        m_CurrentFrame = 0;
+        m_AttackingLeft = true;
+        m_CooldownTimer = 0.0f;
+
         float rand = Random.Range(-8f, 8f);
         moveSpeed += rand;
+
+        FindEnemy();
     }
+
+    private int m_CurrentFrame = -1;
 
     protected override void Update()
     {
-        if(!isAlive) return;
+        //TODO Movement / physics based code should be added to another script
+        //if(!isAlive) return;
 
         base.Update();
 
@@ -100,7 +114,11 @@ public class Shrubbery : Enemy
 
             int frame = Mathf.FloorToInt((m_AnimationTimer / moveAnimationTime) * m_MoveSprites.Length);
 
-            spriteRenderer.sprite = m_MoveSprites[frame];
+            if(m_CurrentFrame != frame)
+            {
+                m_CurrentFrame = frame;
+                spriteRenderer.sprite = m_MoveSprites[frame];
+            }
         }
         else
         {
@@ -109,82 +127,101 @@ public class Shrubbery : Enemy
                 m_AnimationTimer %= moveAnimationTime;
                 m_IsIdling = true;
                 int frame = Mathf.FloorToInt((m_AnimationTimer / moveAnimationTime) * m_MoveSprites.Length);
+                //Force frame change
+                m_CurrentFrame = -1;
                 spriteRenderer.sprite = m_MoveSprites[frame];
                 m_AdditionalDamageTrigger.enabled = false;
             }
             else
             {
                 int frame = Mathf.FloorToInt((m_AnimationTimer / attackAnimationTime) * m_AttackSprites.Length);
-
-                if(frame >= 9 && frame <= 12)
+                if(frame != m_CurrentFrame)
                 {
-                    m_AdditionalDamageTrigger.enabled = true;
-                }
-                else
-                {
-                    m_AdditionalDamageTrigger.enabled = false;
-                }
+                    m_CurrentFrame = frame;
 
-                spriteRenderer.sprite = m_AttackSprites[frame];
+                    if(frame >= 9 && frame <= 12)
+                    {
+                        m_AdditionalDamageTrigger.enabled = true;
+                    }
+                    else
+                    {
+                        m_AdditionalDamageTrigger.enabled = false;
+                    }
+
+                    spriteRenderer.sprite = m_AttackSprites[frame];
+                }
             }
 
         }
     }
 
+    static private Vector2 m_LeftTargetPosition;
+    static private Vector2 m_RightTargetPosition;
+    static private int m_LastTargetUpdateFrame = -1;
+
     protected override void FixedUpdate()
     {
-        if(!isAlive) return;
+        //TODO Movement / physics based code should be added to another script
+        //if(!isAlive) return;
 
         //Move to the left or right of enemy
-        if(m_Enemy == null || !m_Enemy.isAlive)
+        /*if(m_Enemy == null || !m_Enemy.isAlive)
         {
             FindEnemy();
         }
+        */
 
-        if(m_Enemy != null && m_Enemy.isAlive && m_IsIdling)
+        if(!m_Enemy.isAlive) return;
+
+        if(m_IsIdling)//m_Enemy != null && m_Enemy.isAlive && )
         {
             //Choose target position
-
-            const float targetDistantPosition = 1.0f;
-            RaycastHit2D leftHit = Physics2D.Raycast(m_Enemy.spriteRenderer.bounds.center, Vector2.left, targetDistantPosition, 1);
-            RaycastHit2D rightHit = Physics2D.Raycast(m_Enemy.spriteRenderer.bounds.center, Vector2.right, targetDistantPosition, 1);
-
-
-            Vector2 leftPos = new Vector2(m_Enemy.spriteRenderer.bounds.center.x - targetDistantPosition, m_Enemy.spriteRenderer.bounds.center.y);
-            if(leftHit.collider != null)
+            if(Time.frameCount > m_LastTargetUpdateFrame)
             {
-                leftPos = leftHit.point;
-            }
-            if(transform.position.x < m_Enemy.spriteRenderer.bounds.center.x)
-            {
-                float xDistance = m_Enemy.spriteRenderer.bounds.center.x - transform.position.x;
-                if(xDistance < targetDistantPosition)
+                const float targetDistantPosition = 1.0f;
+                RaycastHit2D leftHit = Physics2D.Raycast(m_Enemy.spriteRenderer.bounds.center, Vector2.left, targetDistantPosition, (1 << 6));
+                RaycastHit2D rightHit = Physics2D.Raycast(m_Enemy.spriteRenderer.bounds.center, Vector2.right, targetDistantPosition, (1 << 6));
+
+
+                Vector2 leftPos = new Vector2(m_Enemy.spriteRenderer.bounds.center.x - targetDistantPosition, m_Enemy.spriteRenderer.bounds.center.y);
+                if(leftHit.collider != null)
                 {
-                    leftPos = new Vector2(transform.position.x, leftPos.y);
+                    leftPos = leftHit.point;
                 }
-            }
-            Vector2 rightPos = new Vector2(m_Enemy.spriteRenderer.bounds.center.x + targetDistantPosition, m_Enemy.spriteRenderer.bounds.center.y);
-            if(rightHit.collider != null)
-            {
-                rightPos = rightHit.point;
-            }
-            if(transform.position.x > m_Enemy.spriteRenderer.bounds.center.x)
-            {
-                float xDistance = transform.position.x - m_Enemy.spriteRenderer.bounds.center.x;
-                if(xDistance < targetDistantPosition)
+                if(transform.position.x < m_Enemy.spriteRenderer.bounds.center.x)
                 {
-                    rightPos = new Vector2(transform.position.x, rightPos.y);
+                    float xDistance = m_Enemy.spriteRenderer.bounds.center.x - transform.position.x;
+                    if(xDistance < targetDistantPosition)
+                    {
+                        leftPos = new Vector2(transform.position.x, leftPos.y);
+                    }
                 }
+                Vector2 rightPos = new Vector2(m_Enemy.spriteRenderer.bounds.center.x + targetDistantPosition, m_Enemy.spriteRenderer.bounds.center.y);
+                if(rightHit.collider != null)
+                {
+                    rightPos = rightHit.point;
+                }
+                if(transform.position.x > m_Enemy.spriteRenderer.bounds.center.x)
+                {
+                    float xDistance = transform.position.x - m_Enemy.spriteRenderer.bounds.center.x;
+                    if(xDistance < targetDistantPosition)
+                    {
+                        rightPos = new Vector2(transform.position.x, rightPos.y);
+                    }
+                }
+
+                m_LeftTargetPosition = leftPos;
+                m_RightTargetPosition = rightPos;
             }
 
             Vector2 targetPos;
-            if(Vector2.Distance(leftPos, transform.position) < Vector2.Distance(rightPos, transform.position))
+            if(Vector2.Distance(m_LeftTargetPosition, transform.position) < Vector2.Distance(m_RightTargetPosition, transform.position))
             {
-                targetPos = leftPos;
+                targetPos = m_LeftTargetPosition;
             }
             else
             {
-                targetPos = rightPos;
+                targetPos = m_RightTargetPosition;
             }
 
 
@@ -215,14 +252,18 @@ public class Shrubbery : Enemy
 
     public void Attack()
     {
+        /*
         if(m_Enemy == null || !m_Enemy.isAlive)
         {
             FindEnemy();
         }
 
         if(m_Enemy == null || !m_Enemy.isAlive) return;
+        */
 
         m_IsIdling = false;
+        //Force frame change
+        m_CurrentFrame = -1;
 
         if(m_Enemy.transform.position.x < transform.position.x)
         {

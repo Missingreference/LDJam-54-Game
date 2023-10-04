@@ -22,6 +22,8 @@ public class RelicPickup : MonoBehaviour
 
     private void Awake()
     {
+        gameObject.layer = 12; //Relic
+
         if(m_CommonSprite == null)
         {
             m_CommonSprite = Resources.Load<Sprite>("Sprites/Items/Relics/Common_Relic");

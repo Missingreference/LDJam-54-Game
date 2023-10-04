@@ -19,6 +19,7 @@ public abstract class AttackAbility : MonoBehaviour
     protected virtual void Awake()
     {
         GameObject triggerObject = new GameObject("Damage Trigger");
+        triggerObject.layer = 11;
         triggerObject.transform.SetParent(transform);
 
         damageTrigger = triggerObject.AddComponent<DamageTrigger>();
